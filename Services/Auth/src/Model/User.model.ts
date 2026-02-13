@@ -3,7 +3,15 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
-const UserSchema = new mongoose.Schema<UserType>(
+interface UserMethods {
+  comparePassword(candidatePassword: string): Promise<boolean>;
+  generateJWT(): string;
+}
+
+// Create model type
+type UserModel = mongoose.Model<UserType, {}, UserMethods>;
+
+const UserSchema = new mongoose.Schema<UserType, UserModel, UserMethods>(   
   {
     email: { type: String,  unique: true },
     Username: { type: String, required: true, unique: true ,index: true},
@@ -39,6 +47,6 @@ UserSchema.methods.generateJWT = function () {
 };
 
 // problem of ts cannnolt give expires in as process.env.JWT_EXPIRES_IN as string so we have to hardcode it here
-//
+//    return jwt.sign(payload, secret, { expiresIn: "1D" });
 
-export const UserModel = mongoose.model<UserType>("User", UserSchema);
+export const UserModel = mongoose.model<UserType, UserModel>("User", UserSchema);
