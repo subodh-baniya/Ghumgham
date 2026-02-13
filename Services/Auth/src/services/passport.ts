@@ -5,7 +5,7 @@ import { UserModel } from "../Model/User.model.ts";
 import dotenv from "dotenv";
 
 dotenv.config({
-    path: "./.env"
+    path: "./.env",
 });
 
 export const passportGoogle = passport.use(
