@@ -1,6 +1,7 @@
 import e from "express";
 import zod from "zod";
 // for database 
+
 export const UserType = zod.object({
     id: zod.string().optional(),
     Name: zod.string().min(2, "Name must be at least 2 characters long"),
@@ -9,6 +10,7 @@ export const UserType = zod.object({
     password: zod.string().min(6, "Password must be at least 6 characters long"),
     createdAt: zod.date(),
     updatedAt: zod.date(),
+    role: zod.string().optional(),
 })  
 
 

@@ -22,6 +22,7 @@ const registerUser = asyncHandler(async (req: any, res: any) => {
       Username: newUser.Username,
       email: newUser.email,
       Name: newUser.Name,
+      role: newUser.role,
     };
     return apiResponse(
       res,
@@ -68,6 +69,7 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
     const userResponse = {
       id: user._id,
       Username: user.Username,
+      role: user.role,
     };
     return apiResponse(
       res,

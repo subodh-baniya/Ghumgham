@@ -17,6 +17,7 @@ const UserSchema = new mongoose.Schema<UserType, UserModel, UserMethods>(
     Username: { type: String, required: true, unique: true ,index: true},
     password: { type: String, required: true },
     Name: { type: String, required: true },
+    role: { type: String, default: "user" , enum: ["user", "admin", "superadmin", "moderator", "editor"]},
 
   },
   { timestamps: true },
@@ -39,7 +40,7 @@ UserSchema.methods.comparePassword = async function (
 };
 
 UserSchema.methods.generateJWT = function () {
-  const payload = { id: this._id, email: this.email };
+  const payload = { id: this._id, email: this.email, role: this.role };
   const secret: string = process.env.JWT_SECRET as string;
   const data = process.env.JWT_EXPIRES_IN as string;
 
@@ -47,6 +48,6 @@ UserSchema.methods.generateJWT = function () {
 };
 
 // problem of ts cannnolt give expires in as process.env.JWT_EXPIRES_IN as string so we have to hardcode it here
-//    return jwt.sign(payload, secret, { expiresIn: "1D" });
+
 
 export const UserModel = mongoose.model<UserType, UserModel>("User", UserSchema);
