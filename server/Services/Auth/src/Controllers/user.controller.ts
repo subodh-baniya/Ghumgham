@@ -1,7 +1,5 @@
-import { UserModel } from "../Model/User.model.ts";
-import { asyncHandler } from "../Utils/asynchandler.ts";
-import { apiError } from "../Utils/api.error.ts";
-import { apiResponse } from "../Utils/api.response.ts";
+
+import { apiError, asyncHandler, apiResponse , Usermodel } from "@Packages/index.ts";
 import { loginSchema, registerSchema } from "../Schema/user.schema.ts";
 import { z } from "zod";
 
