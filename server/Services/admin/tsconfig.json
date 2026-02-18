@@ -14,6 +14,9 @@
     // "lib": ["esnext"],
     // "types": ["node"],
     // and npm install -D @types/node
+     "paths": {
+      "@packages": ["../../Packages/index.ts"]
+    },
 
     // Other Outputs
     "sourceMap": true,
