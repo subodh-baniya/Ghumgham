@@ -4,8 +4,8 @@ import {
   logoutUser,
   registerUser,
   googleAuth
-} from "../Controllers/user.controller.ts";
-import { authMiddleware } from "../Middleware/Auth.middleware.ts";
+} from "../Controllers/user.controller.js";
+import { authMiddleware } from "../Middleware/Auth.middleware.js";
 import passport from "passport";
 
 const router = Router();

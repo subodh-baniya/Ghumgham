@@ -9,8 +9,8 @@ dotenv.config({
 });
 
 
-import UserRouter from "./Router/user.router.ts";
-import "./services/passport.ts"; 
+import UserRouter from "./Router/user.router.js";
+import "./services/passport.js"; 
 
 
 const app = express();

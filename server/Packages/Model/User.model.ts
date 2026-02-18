@@ -1,4 +1,4 @@
-import { UserType } from "../../Services/Auth/src/Schema/user.schema.ts";
+import { UserType } from "@packages/Schema/user.schema.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";

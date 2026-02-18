@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { UserModel } from "../Model/User.model.ts";
+import { apiError, asyncHandler, apiResponse , UserModel } from "@packages/index.js";
 import dotenv from "dotenv";
 
 dotenv.config({ path: "./.env" });
