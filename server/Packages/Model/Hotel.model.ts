@@ -2,7 +2,7 @@ import mongoose, { SchemaType } from "mongoose";
 
 const HotelSchema=new mongoose.Schema({
 
-    hotel:{
+    owner:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"UserModel",
         required:true
@@ -21,11 +21,9 @@ const HotelSchema=new mongoose.Schema({
         required:true
     }
 
-
-
 },{timestamps:true})
 
 
 
 
-export const hotel=mongoose.model('hotels',HotelSchema);
+export const hotelModel=mongoose.model('hotels',HotelSchema);
