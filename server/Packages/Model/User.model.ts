@@ -27,6 +27,7 @@ const UserSchema = new mongoose.Schema<UserType, UserModel, UserMethods>(
       unique: true,
       sparse: true,
     },
+    isVerified: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
