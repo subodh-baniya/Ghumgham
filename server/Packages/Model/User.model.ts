@@ -20,7 +20,7 @@ const UserSchema = new mongoose.Schema<UserType, UserModel, UserMethods>(
     role: {
       type: String,
       default: "user",
-      enum: ["user", "admin", "superadmin", "moderator", "editor"],
+      enum: ["user", "admin", "superadmin", "hotelOwner", "editor"],
     },
     googleId: {
       type: String,
