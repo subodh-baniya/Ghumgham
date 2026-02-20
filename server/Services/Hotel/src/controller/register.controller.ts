@@ -1,18 +1,21 @@
 
-import {asyncHandler,apiError,apiResponse} from "@packages"
+import {asyncHandler,apiError,apiResponse,hotelModel} from "@packages"
+import type { HotelInput } from "../validator/hotel.validator.js"
+import { createHotelSchema } from "../validator/hotel.validator.js"
+
 const registerHotel = asyncHandler(async (req : any,res : any)=>{
-    const {name,location,description} = req.body
-    if(!name || !location || !description){
-        return apiError(res, 400 , "All fields are required")
+    try {
+        const parsedData = createHotelSchema.safeParse(req.body);
+        if (!parsedData.success) {
+            return apiError(res, 400, "Validation error", parsedData.error.issues);
+        }
+        const hotelData: HotelInput = parsedData.data;
+        const newHotel = new hotelModel(hotelData);
+        await newHotel.save();
+        return apiResponse(res, 201, true, "Hotel registered successfully", newHotel);    
+    } catch (error) {
+        return apiError(res,500,"Internal server error")
     }
-    // Here you can add logic to save the hotel information to the database
-    // For example:
-    // const newHotel = await Hotel.create({name, location, description})
     
-    // For now, we'll just return a success response
-    return apiResponse(res, 201,true, "Hotel registered successfully", {name, location, description})
 })
-
-
-export default {    registerHotel
-}
+export default { registerHotel }
