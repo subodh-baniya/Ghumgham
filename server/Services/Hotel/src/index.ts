@@ -1,14 +1,20 @@
-import connectDB from "./database/db.connect.js";
+import { connectDB } from "@packages";
 import app from "./app.js";
 
-try {  
-    connectDB()
-} catch (error) {
-    console.error("Failed to connect to the database:", error);
-}
+const startServer = async () => {
+    try {
+        await connectDB();
+        console.log("Database connection established. Starting Hotel service...");
+        
+        app.listen(process.env.PORT, () => {
+            console.log(`Hotel service is running on port ${process.env.PORT}`);
+        });
+    } catch (error) {
+        console.error("Failed to connect to the database:", error);
+        process.exit(1);
+    }
+};
 
-app.listen(process.env.PORT, () => {
-    console.log(`Hotel service is running on port ${process.env.PORT}`);
-});
+startServer();
 
 
