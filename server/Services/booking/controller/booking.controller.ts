@@ -4,6 +4,10 @@ import { roomModel } from "../../../Packages/Model/Room.model.js"
 import { bookingModel } from "../../../Packages/Model/Booking.model.js"
 import { apiError } from "../../../Packages/Utils/api.error.js"
 import { apiResponse } from "../../../Packages/Utils/api.response.js"
+import { hotelModel } from "../../../Packages/Model/Hotel.model.js"
+import * as crypto from "crypto";
+
+
 
 const createBooking = asyncHandler(async (req: any, res: any) => {
 
@@ -12,7 +16,7 @@ const createBooking = asyncHandler(async (req: any, res: any) => {
 
 
     try {
-        const { roomId, guests, checkIn, checkOut } = req.body;
+        const { roomId, guests, checkIn, checkOut, paymentMethod } = req.body;
 
         const start = new Date(checkIn);
         const end = new Date(checkOut);
@@ -28,7 +32,7 @@ const createBooking = asyncHandler(async (req: any, res: any) => {
         }
 
         if (room.capacity < guests) {
-            return apiError({}, 400, "room capacity exteeded");
+            return apiError({}, 400, "room capacity exceeded");
         }
 
         const bookingalreadyexist = await bookingModel.findOne({
@@ -48,7 +52,7 @@ const createBooking = asyncHandler(async (req: any, res: any) => {
         const totalPrice = totalnights * room.pricePerNights;
 
 
-        const createBooking = await bookingModel.create([{
+        const createBooking = new bookingModel({
             user: req.user._id,
             hotel: room.hotel,
             room: roomId,
@@ -57,13 +61,63 @@ const createBooking = asyncHandler(async (req: any, res: any) => {
             checkOut: end,
             status: "PENDING",
             bookingPayment: "UNPAID",
-            totalPrice
-        }], { session });
+            totalPrice,
+            paymentMethod
+        }, { session });
+
+        await createBooking.save({ session });
 
         await session.commitTransaction();
         session.endSession();
 
-        return apiResponse(createBooking, 200, true, "Booking created");
+
+
+        const hotel = await hotelModel.findById(room.hotel);
+
+        if (paymentMethod == "ESEWA") {
+
+            if (!hotel?.esewa_Merchantid) {
+                return apiError({}, 500, "Can't get hotel esewa Merchant Id")
+            }
+
+            if (!process.env.ESEWA_HASH_SECRET) {
+                return apiError({}, 500, "ESEWA_HASH_SECRET is not configured")
+            }
+
+            const transaction_uuid = createBooking._id.toString();
+            const product_code = hotel.esewa_Merchantid;
+            const total_amount = totalPrice.toString();
+
+            const signed_field_names = "total_amount,transaction_uuid,product_code";
+
+             const message = `total_amount=${total_amount},transaction_uuid=${transaction_uuid},product_code=${product_code}`;
+                const signature = crypto.createHmac('sha256', process.env.ESEWA_HASH_SECRET).update(message).digest('base64');
+
+
+                    const esewaPayload = {
+                        amount: total_amount,
+                        tax_amount: "0",
+                        total_amount,
+                        transaction_uuid,
+                        product_code,
+                        product_service_charge: "0",
+                        product_delivery_charge: "0",
+                        success_url: `${process.env.BASE_URL}/api/esewa/success`,
+                        failure_url: `${process.env.BASE_URL}/api/esewa/failure`,
+                        signed_field_names,
+                        signature
+                    };
+
+
+                     return apiResponse({
+            bookingId:createBooking._id,
+            esewaFormData:esewaPayload,
+            esewaUrl:"https://rc-epay.esewa.com.np/api/epay/main/v2/form"
+        }, 200, true, "Booking created");
+
+        }
+
+
 
     } catch (error: any) {
         await session.abortTransaction();
