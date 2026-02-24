@@ -46,6 +46,15 @@ const bookingSchema = new mongoose.Schema({
     totalPrice:{
         type:Number,
         required:true
+    },
+    paymentMethod:{
+        type:String,
+        enum:["KHALTI","ESEWA"],
+        required:true
+    },
+
+    paymentReferenceId:{
+        type:String
     }
 
 }, { timestamps: true })

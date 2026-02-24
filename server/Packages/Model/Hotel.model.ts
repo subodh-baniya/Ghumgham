@@ -71,6 +71,12 @@ const HotelSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+
+    esewa_Merchantid:{
+            type:String,
+           default:"EPAYTEST" //in production it will be provided by the hotel when they register as merchant 
+    },
+    
     rooms: [
       {
         roomNumber: { type: String, required: true },
