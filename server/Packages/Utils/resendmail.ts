@@ -5,7 +5,8 @@ dotenv.config({
     path: "../../.env"
 });
 
-const sendEmail = async (env: string, to :string, subject?: string , html?: string) => {
+
+const sendEmail = async (to :string, subject?: string , html?: string) => {
     const resend = new Resend(process.env.RESEND_API as string);
     try {
         await resend.emails.send({
