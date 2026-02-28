@@ -13,9 +13,10 @@ app.use(cors({
 app.use(express.json({
     limit: '10mb' 
 }));
-
 app.use(urlencoded({extended:true}));
-
 app.use(cookieParser())
+
+import Bookingrouter from "./routes/booking.router.js"
+app.use("/api/v1/booking",Bookingrouter)
 
 export default app
