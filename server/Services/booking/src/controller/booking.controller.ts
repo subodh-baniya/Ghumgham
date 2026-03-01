@@ -1,10 +1,5 @@
-import { asyncHandler } from "../../../../Packages/Utils/asynchandler.js"
+import { asyncHandler,apiError,apiResponse,roomModel,hotelModel,bookingModel } from "@packages"
 import mongoose from "mongoose";
-import { roomModel } from "../../../../Packages/Model/Room.model.js"
-import { bookingModel } from "../../../../Packages/Model/Booking.model.js"
-import { apiError } from "../../../../Packages/Utils/api.error.js"
-import { apiResponse } from "../../../../Packages/Utils/api.response.js"
-import { hotelModel } from "../../../../Packages/Model/Hotel.model.js"
 import * as crypto from "crypto";
 import axios from "axios"
 
