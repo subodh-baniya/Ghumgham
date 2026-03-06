@@ -150,7 +150,7 @@ const AboutUs = () => {
             for hotels through our mobile booking app.
           </p>
 
-          <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition">
+          <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition cursor-pointer">
             Register Your Hotel
           </button>
 
