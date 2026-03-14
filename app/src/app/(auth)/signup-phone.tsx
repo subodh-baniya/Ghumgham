@@ -18,7 +18,7 @@ import { Spacing } from '@/src/constants/spacing';
 export default function SignUpPhone() {
   const router = useRouter();
   const [name, setName] = useState('');
-  const [countryCode, setCountryCode] = useState('+1');
+  const [countryCode, setCountryCode] = useState('+977');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [agreeToTerms, setAgreeToTerms] = useState(false);

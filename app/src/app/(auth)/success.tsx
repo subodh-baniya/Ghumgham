@@ -18,10 +18,10 @@ export default function Success() {
   const router = useRouter();
 
   const handleGoCreate = async () => {
-    // Store auth token (in real app, this would come from your auth service)
+  
     await AsyncStorage.setItem('token', 'user-auth-token');
     
-    // Navigate to the main app
+
     router.replace('/(tabs)' as any);
   };
 
