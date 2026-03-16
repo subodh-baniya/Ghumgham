@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import OnboardingScreen from "@/src/components/onboarding/onboarding-screen";
@@ -8,13 +8,10 @@ import {
 } from "@/src/constants/screens/onboarding";
 import { getOnboardingSlides } from "@/src/services/onboarding.service";
 
-interface OnboardingFlowScreenProps {
-  step: number;
-}
-
-export default function OnboardingFlowScreen({ step }: OnboardingFlowScreenProps) {
+export default function OnboardingFlowScreen() {
   const router = useRouter();
   const [slides, setSlides] = useState<OnboardingSlide[]>(ONBOARDING_SLIDES);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
@@ -33,10 +30,12 @@ export default function OnboardingFlowScreen({ step }: OnboardingFlowScreenProps
     };
   }, []);
 
-  const currentIndex = useMemo(() => {
+  useEffect(() => {
     const safeMax = Math.max(0, slides.length - 1);
-    return Math.min(Math.max(step, 0), safeMax);
-  }, [slides.length, step]);
+    if (currentIndex > safeMax) {
+      setCurrentIndex(safeMax);
+    }
+  }, [slides.length, currentIndex]);
 
   const currentSlide = slides[currentIndex] || ONBOARDING_SLIDES[currentIndex] || ONBOARDING_SLIDES[0];
   const isLast = currentIndex >= slides.length - 1;
@@ -52,12 +51,7 @@ export default function OnboardingFlowScreen({ step }: OnboardingFlowScreenProps
       return;
     }
 
-    if (currentIndex === 0) {
-      router.push("/(onboarding)/onboarding2" as any);
-      return;
-    }
-
-    router.push("/(onboarding)/onboarding3" as any);
+    setCurrentIndex((prev) => Math.min(prev + 1, slides.length - 1));
   };
 
   return (

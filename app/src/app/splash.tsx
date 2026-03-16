@@ -35,7 +35,7 @@ export default function SplashScreen() {
       if (!isMounted) return;
 
       const targetRoute = !hasOnboarded
-        ? "/(onboarding)/onboarding1"
+        ? "/(onboarding)"
         : !token
           ? "/(auth)/signup"
           : "/(tabs)";
