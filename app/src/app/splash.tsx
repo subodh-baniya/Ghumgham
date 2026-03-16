@@ -37,7 +37,7 @@ export default function SplashScreen() {
       const targetRoute = !hasOnboarded
         ? "/(onboarding)"
         : !token
-          ? "/(auth)/signup"
+          ? "/(auth)/signin"
           : "/(tabs)";
 
       timer = setTimeout(() => {

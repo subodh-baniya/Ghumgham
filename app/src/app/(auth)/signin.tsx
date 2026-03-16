@@ -21,42 +21,61 @@ import axios from 'axios';
 export default function SignIn() {
   const API_SIGNIN = API_ENDPOINTS_AUTH.LOGIN;
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSignIn = async () => {
-    const trimmedEmail = email.trim();
-    const trimmedPassword = password.trim();
-    if (!trimmedEmail || !trimmedPassword) {
-      setErrorMessage('Please enter email and password.');
-      return;
+  const getApiErrorMessage = (error: unknown) => {
+    if (axios.isAxiosError(error)) {
+      const responseData = error.response?.data;
+
+      if (typeof responseData?.message === 'string' && responseData.message.trim()) {
+        return responseData.message;
+      }
+
+      if (Array.isArray(responseData?.errors) && responseData.errors.length > 0) {
+        const firstError = responseData.errors[0];
+        if (typeof firstError?.message === 'string' && firstError.message.trim()) {
+          return firstError.message;
+        }
+      }
+
+      if (typeof error.message === 'string' && error.message.trim()) {
+        return error.message;
+      }
     }
 
+    return 'An error occurred during sign in. Please try again.';
+  };
+
+  const handleSignIn = async () => {
+    const trimmedUsername = username.trim();
+    const trimmedPassword = password.trim();
+    if (!trimmedUsername || !trimmedPassword) {
+      setErrorMessage('Please enter username and password.');
+      return;
+    }
     setLoading(true);
     setErrorMessage('');
-    // Add your sign in logic here
+
     try {
-      const response = await axios.post(API_SIGNIN, {
-        email: trimmedEmail,
-        password: trimmedPassword,
+      const payload = { Username: trimmedUsername, password: trimmedPassword };
+      const response = await axios.post(API_SIGNIN, payload, {
+        withCredentials: true,
+        headers: { 'Content-Type': 'application/json' },
       });
-      setLoading(false);
-      // Handle successful sign in
+
+      if (response.status === 200) {
+        router.replace('/(tabs)' as any);
+      }
     } catch (error) {
+      setErrorMessage(getApiErrorMessage(error));
+    } finally {
       setLoading(false);
-      setErrorMessage('Invalid email or password.');
     }
-    setTimeout(() => {
-      setLoading(false);
-      // Navigate to verification with contact info.
-      router.push({
-        pathname: '/(auth)/verify-code',
-        params: { email: trimmedEmail },
-      } as any);
-    }, 600);
   };
+  
 
   const handleSignUp = () => {
     router.push('/(auth)/signup' as any);
@@ -113,10 +132,10 @@ export default function SignIn() {
           />
 
           <Input
-            placeholder="Email address"
-            value={email}
+            placeholder="Username"
+            value={username }
             onChangeText={(value) => {
-              setEmail(value);
+              setUsername (value);
               if (errorMessage) setErrorMessage('');
             }}
             keyboardType="email-address"
@@ -140,7 +159,7 @@ export default function SignIn() {
             title="Continue"
             onPress={handleSignIn}
             loading={loading}
-            disabled={!email.trim() || !password.trim()}
+            disabled={!username.trim() || !password.trim()}
             style={styles.signInButton}
           />
         </View>

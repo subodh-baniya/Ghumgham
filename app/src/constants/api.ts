@@ -5,7 +5,6 @@ interface ApiEndpoints {
 }
 // for auth service
 const API_AUTH = `${API_URL}:3000/api/v1/users`;
-
 const API_ENDPOINTS_AUTH: ApiEndpoints = {
   LOGIN: `${API_AUTH}/login`,
   LOGOUT: `${API_AUTH}/logout`,

@@ -54,7 +54,7 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
       Username: validate.Username,
     });
     if (!user) {
-      return apiError(res, 400, "Invalid username");
+      return apiError(res, 400, "Username don't exist");
     }
     const isPasswordValid = await user.comparePassword(validate.password);
     if (!isPasswordValid) {
@@ -64,7 +64,7 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      maxAge: 24 * 60 * 60 * 7000, // 7 day
     };
     const token = user.generateJWT();
     res.setHeader("Authorization", `Bearer ${token}`); 
@@ -88,7 +88,7 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
         field: err.path.join("."),
         message: err.message,
       }));
-      return apiError(res, 400, "Validation Error", errors);
+      return apiError(res, 400, "Only username and proper password is accepted", errors);
     }
     return apiError(res, 500, "Failed to login user", error);
   }
