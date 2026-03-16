@@ -58,6 +58,7 @@ export default function SignUp() {
 
       if (!data.Name || !data.Username || !data.email || !data.password) {
         setErrorMessage("Please fill out all required fields.");
+        setLoading(false);
         return;
       }
 

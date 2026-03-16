@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -16,14 +16,24 @@ import { Typography } from '@/src/constants/app/typography';
 import { Spacing } from '@/src/constants/app/spacing';
 import { API_ENDPOINTS_AUTH } from '@/src/constants/api';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
+import { useAuth } from '@/src/context/AuthContext';
 
 
 export default function SignIn() {
   const API_SIGNIN = API_ENDPOINTS_AUTH.LOGIN;
   const router = useRouter();
+  const { checkAuth, user } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      router.replace('/(tabs)' as any);
+    }
+  }, [user]);
   const [errorMessage, setErrorMessage] = useState('');
 
   const getApiErrorMessage = (error: unknown) => {
@@ -67,7 +77,17 @@ export default function SignIn() {
       });
 
       if (response.status === 200) {
-        router.replace('/(tabs)' as any);
+        const authHeader = response.headers['authorization'];
+        if (authHeader) {
+          const token = authHeader.replace('Bearer ', '');
+          await SecureStore.setItemAsync('userToken', token);
+          await AsyncStorage.setItem('token', token);
+        }
+        const userData = response.data?.data;
+        if (userData) {
+          await SecureStore.setItemAsync('userData', JSON.stringify(userData));
+        }
+        await checkAuth();
       }
     } catch (error) {
       setErrorMessage(getApiErrorMessage(error));

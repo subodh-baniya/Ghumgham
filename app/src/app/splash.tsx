@@ -15,8 +15,11 @@ import { Colors } from "@/src/constants/app/color";
 import { Typography } from "@/src/constants/app/typography";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { resetAppData } from "@/src/utils/storage-reset";
+import { useAuth } from "@/src/context/AuthContext";
+
 export default function SplashScreen() {
   const router = useRouter();
+  const { isLoading, user } = useAuth();
   const logoWipe = useRef(new Animated.Value(0)).current;
   const contentOpacity = useRef(new Animated.Value(1)).current;
   
@@ -24,19 +27,17 @@ export default function SplashScreen() {
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
     let isMounted = true;
-  
 
     const bootstrap = async () => {
-      const [token, hasOnboarded] = await Promise.all([
-        AsyncStorage.getItem("token"),
-        AsyncStorage.getItem("hasOnboarded"),
-      ]);
+      if (isLoading) return;
+
+      const hasOnboarded = await AsyncStorage.getItem("hasOnboarded");
 
       if (!isMounted) return;
 
       const targetRoute = !hasOnboarded
         ? "/(onboarding)"
-        : !token
+        : !user
           ? "/(auth)/signin"
           : "/(tabs)";
 
@@ -71,7 +72,7 @@ export default function SplashScreen() {
       logoWipe.stopAnimation();
       contentOpacity.stopAnimation();
     };
-  }, [router, logoWipe, contentOpacity]);
+  }, [isLoading, user, router, logoWipe, contentOpacity]);
 
   const wipeTranslateY = logoWipe.interpolate({
     inputRange: [0, 1],
