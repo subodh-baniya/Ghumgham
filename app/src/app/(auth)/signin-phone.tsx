@@ -17,16 +17,22 @@ import { Spacing } from '@/src/constants/spacing';
 
 export default function SignInPhone() {
   const router = useRouter();
-  const [countryCode, setCountryCode] = useState('+1');
+  const [countryCode, setCountryCode] = useState('+977');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSignIn = async () => {
+    const trimmedPhone = phoneNumber.trim();
+    if (!trimmedPhone) return;
+
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      router.push('/(auth)/verify-code' as any);
-    }, 1500);
+      router.push({
+        pathname: '/(auth)/verify-code',
+        params: { phone: `${countryCode}${trimmedPhone}` },
+      } as any);
+    }, 600);
   };
 
   const handleSignUp = () => {
@@ -91,10 +97,10 @@ export default function SignInPhone() {
           </View>
 
           <Button
-            title="Sign In"
+            title="Continue"
             onPress={handleSignIn}
             loading={loading}
-            disabled={!phoneNumber}
+            disabled={!phoneNumber.trim()}
             style={styles.signInButton}
           />
         </View>

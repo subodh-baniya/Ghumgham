@@ -25,13 +25,20 @@ export default function SignUpPhone() {
   const [loading, setLoading] = useState(false);
 
   const handleSignUp = async () => {
-    if (!agreeToTerms) return;
-    
+    const trimmedName = name.trim();
+    const trimmedPhone = phoneNumber.trim();
+    const trimmedPassword = password.trim();
+
+    if (!agreeToTerms || !trimmedName || !trimmedPhone || !trimmedPassword) return;
+
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      router.push('/(auth)/verify-code' as any);
-    }, 1500);
+      router.push({
+        pathname: '/(auth)/verify-code',
+        params: { phone: `${countryCode}${trimmedPhone}` },
+      } as any);
+    }, 600);
   };
 
   const handleSignIn = () => {
@@ -130,7 +137,7 @@ export default function SignUpPhone() {
             title="Continue"
             onPress={handleSignUp}
             loading={loading}
-            disabled={!name || !phoneNumber || !password || !agreeToTerms}
+            disabled={!name.trim() || !phoneNumber.trim() || !password.trim() || !agreeToTerms}
             style={styles.continueButton}
           />
         </View>

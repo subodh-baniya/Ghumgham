@@ -52,17 +52,17 @@ export default function SignUp() {
           axios
             .post(API_SEND_OTP, {
               email,
-            }).catch((error) => {
+            }).catch((error: any) => {
               console.error("OTP sending error:", error);
             });
         })
-        .catch((error) => {
+        .catch((error: any) => {
           console.error("Signup error:", error);
         })
         .finally(() => {
           setLoading(false);
         });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Signup error:", error);
     }
   };

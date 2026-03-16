@@ -22,13 +22,20 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false);
 
   const handleSignIn = async () => {
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+    if (!trimmedEmail || !trimmedPassword) return;
+
     setLoading(true);
     // Add your sign in logic here
     setTimeout(() => {
       setLoading(false);
-      // Navigate to home or verify code
-      router.push('/(auth)/verify-code' as any);
-    }, 1500);
+      // Navigate to verification with contact info.
+      router.push({
+        pathname: '/(auth)/verify-code',
+        params: { email: trimmedEmail },
+      } as any);
+    }, 600);
   };
 
   const handleSignUp = () => {
@@ -97,10 +104,10 @@ export default function SignIn() {
           />
 
           <Button
-            title="Sign In"
+            title="Continue"
             onPress={handleSignIn}
             loading={loading}
-            disabled={!email || !password}
+            disabled={!email.trim() || !password.trim()}
             style={styles.signInButton}
           />
         </View>

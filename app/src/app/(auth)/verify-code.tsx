@@ -13,9 +13,11 @@ const OTP_LENGTH = 4;
 
 export default function VerifyCode() {
   const router = useRouter();
-  const { email } = useLocalSearchParams<{ email: string }>();
+  const { email, phone } = useLocalSearchParams<{ email?: string; phone?: string }>();
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const contact = (email || phone || "").toString();
 
   const handleNumberPress = (value: string) => {
     if (otp.length < OTP_LENGTH) {
@@ -28,29 +30,16 @@ export default function VerifyCode() {
   };
 
   const handleContinue = async () => {
-    if (otp.length !== OTP_LENGTH) return;
+    if (otp.length !== OTP_LENGTH || !contact) return;
+
     setLoading(true);
     try {
-      await axios
-        .post(API_ENDPOINTS_AUTH.VERIFY_OTP, {
-          email,
-          otp,
-        })
-        .then((response) => {
-          setTimeout(() => {
-            setLoading(false);
-            router.push("/(auth)/success" as any);
-          }, 1500);
-        })
-        .catch((error) => {
-          console.error("OTP verification error:", error);
-          // Handle error (e.g., show message to user)
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+      const payload = email ? { email, otp } : { phone, otp };
+      await axios.post(API_ENDPOINTS_AUTH.VERIFY_OTP, payload);
+      router.push("/(auth)/success" as any);
     } catch (error) {
       console.error("OTP verification error:", error);
+    } finally {
       setLoading(false);
     }
   };
@@ -66,7 +55,7 @@ export default function VerifyCode() {
           <Text style={styles.title}>Verify Code</Text>
           <Text style={styles.subtitle}>
             We have sent a verification code to{" "}
-            <Text style={styles.phoneNumber}>{email}</Text>
+            <Text style={styles.phoneNumber}>{contact || "your account"}</Text>
           </Text>
         </View>
 
@@ -89,7 +78,7 @@ export default function VerifyCode() {
         <Button
           title="Continue"
           onPress={handleContinue}
-          disabled={!isComplete}
+          disabled={!isComplete || !contact}
           loading={loading}
           style={styles.continueButton}
         />
