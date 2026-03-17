@@ -67,6 +67,8 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
       maxAge: 24 * 60 * 60 * 7000, // 7 day
     };
     const token = user.generateJWT();
+    user.refreshToken = token;
+    await user.save();
     res.setHeader("Authorization", `Bearer ${token}`); 
     res.cookie("token", token, options);
 
