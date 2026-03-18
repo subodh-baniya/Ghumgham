@@ -18,7 +18,7 @@ const createBooking = asyncHandler(async (req: any, res: any) => {
             const end = new Date(checkOut);
 
             if (start >= end) {
-                throw new Error("Invalid entry of dates");
+                return apiError({},400,"Invalid entry of dates");
             }
 
             const room = await roomModel
@@ -26,11 +26,11 @@ const createBooking = asyncHandler(async (req: any, res: any) => {
                 .session(session);
 
             if (!room) {
-                throw new Error("Room not found");
+              return apiError({},400,"Room not found");
             }
 
             if (room.capacity < guests) {
-                throw new Error("Room capacity exceeded");
+                return apiError({},400,"Room capacity exceeded");
             }
 
             const existingBooking = await bookingModel
@@ -43,7 +43,7 @@ const createBooking = asyncHandler(async (req: any, res: any) => {
                 .session(session);
 
             if (existingBooking) {
-                throw new Error("Room not available for entered dates");
+               return apiError({},400,"Room not available");
             }
 
             const nights =
@@ -74,7 +74,7 @@ const createBooking = asyncHandler(async (req: any, res: any) => {
             if (paymentMethod === "ESEWA") {
 
                 if (!hotel?.esewa_Merchantid) {
-                    throw new Error("Hotel Esewa merchant id missing");
+                 return apiError({},400,"Hotel doesnot have merchant id");
                 }
 
                 const transaction_uuid = booking._id.toString();
@@ -111,7 +111,22 @@ const createBooking = asyncHandler(async (req: any, res: any) => {
             }
 
             if (paymentMethod === "KHALTI") {
-                return apiResponse({ bookingId: booking._id, totalPrice }, 200, true, "Booking created via Khalti");
+              
+                    if(!hotel?.khalti_SecretKey){
+                        return apiError({},400,"Can't get the khalti secret key");
+                    }
+                                const totalpaisa=totalPrice*100;
+
+                                const khaltires=await axios.post("https://dev.khalti.com/api/v2/epayment/initiate/",
+                                    {
+                                        return_url:`${process.env.FRONTEND_URL}/khalti.verify`,
+                                        website_url:`${process.env.FRONTEND_URL}`,
+                                        
+                                    }
+                                )
+
+
+
             }
 
             return res.json({
@@ -167,6 +182,8 @@ const esewaSuccess = asyncHandler(async (req: any, res: any) => {
 })
 
 const khaltiVerify=asyncHandler(async(req:any,res:any)=>{
+
+    
     
 
 })
