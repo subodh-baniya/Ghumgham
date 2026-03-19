@@ -29,6 +29,7 @@ const API_HOTEL = `${API_URL}/api/hotel`;
 
 const API_ENDPOINTS_HOTEL: ApiEndpoints = {
   GET_HOTELS: `${API_HOTEL}`,
+  FEATURED_HOTELS: `${API_HOTEL}/featured`,
   GET_HOTEL_BY_ID: `${API_HOTEL}/:id`,
   CREATE_HOTEL: `${API_HOTEL}/create`,
   UPDATE_HOTEL: `${API_HOTEL}/update/:id`,
