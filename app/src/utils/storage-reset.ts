@@ -11,6 +11,9 @@ export async function resetAppData(): Promise<void> {
     SECURE_STORE_KEYS.map(async (key) => {
       try {
         await SecureStore.deleteItemAsync(key);
+        await SecureStore.deleteItemAsync("token");
+        await AsyncStorage.setItem('token', "");
+
       } catch {
         // Ignore key-level failures so reset can continue.
       }
