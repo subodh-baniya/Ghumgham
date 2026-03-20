@@ -1,0 +1,16 @@
+FROM node:20-slim
+
+WORKDIR /app
+
+# Copy lockfiles first — better layer caching
+# (only re-runs npm ci if these files change)
+COPY Packages/ /Packages
+COPY package.json package-lock.json ./
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 4001
+
+CMD ["npm", "run", "dev"]

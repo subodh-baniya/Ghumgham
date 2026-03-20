@@ -9,13 +9,9 @@ const API_ENDPOINTS_AUTH: ApiEndpoints = {
   LOGIN: `${API_AUTH}/login`,
   LOGOUT: `${API_AUTH}/logout`,
   REGISTER: `${API_AUTH}/register`,
-  USER_PROFILE: `${API_AUTH}/profile`,
+  USER_PROFILE: `${API_AUTH}/profile-picture`,
   UPDATE_PROFILE: `${API_AUTH}/update-profile`,
   CHANGE_PASSWORD: `${API_AUTH}/change-password`,
-  GET_POSTS: `${API_URL}/api/posts`,
-  CREATE_POST: `${API_URL}/api/posts/create`,
-  UPDATE_POST: `${API_URL}/api/posts/update`,
-  DELETE_POST: `${API_URL}/api/posts/delete`,
   VERIFY_OTP: `${API_AUTH}/verify-otp`,
   SEND_OTP: `${API_AUTH}/send-otp`,
 };
@@ -29,6 +25,7 @@ const API_HOTEL = `${API_URL}/api/hotel`;
 
 const API_ENDPOINTS_HOTEL: ApiEndpoints = {
   GET_HOTELS: `${API_HOTEL}`,
+  FEATURED_HOTELS: `${API_HOTEL}/featured`,
   GET_HOTEL_BY_ID: `${API_HOTEL}/:id`,
   CREATE_HOTEL: `${API_HOTEL}/create`,
   UPDATE_HOTEL: `${API_HOTEL}/update/:id`,
@@ -77,6 +74,7 @@ const API_ENDPOINTS_CONTENT: ApiEndpoints = {
 };
 export {
   API_ENDPOINTS_AUTH,
+  API_ENDPOINTS_HOTEL,
   API_ENDPOINTS_BOOKING,
   API_ENDPOINTS_PAYMENT,
   API_ENDPOINTS_NOTIFICATIONS,

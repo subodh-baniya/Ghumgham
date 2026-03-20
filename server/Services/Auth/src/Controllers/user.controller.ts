@@ -67,6 +67,8 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
       maxAge: 24 * 60 * 60 * 7000, // 7 day
     };
     const token = user.generateJWT();
+    user.refreshToken = token;
+    await user.save();
     res.setHeader("Authorization", `Bearer ${token}`); 
     res.cookie("token", token, options);
 
@@ -222,5 +224,14 @@ const verifyOTP = asyncHandler(async (req: any, res: any) => {
     return apiResponse(res, 200, true, "OTP verified successfully");
 });
 
+const getUserProfilePicture = asyncHandler(async (req: any, res: any) => {
+    const userId = req.user.id;
+    const user = await UserModel.findById(userId).select("profileimage");
+    if (!user) {
+        return apiError(res, 404, "User not found");
+    }
+    return apiResponse(res, 200, true, "User profile picture retrieved successfully", { profilePicture: user.profileImage });
+});
 
-export { registerUser, loginUser, logoutUser, googleAuth, getUserProfile, updateUserProfile, deleteUserProfile,sendOTP, verifyOTP };
+
+export { registerUser, loginUser, logoutUser, googleAuth, getUserProfile, updateUserProfile, deleteUserProfile,sendOTP, verifyOTP, getUserProfilePicture };
