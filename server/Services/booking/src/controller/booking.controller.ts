@@ -121,7 +121,19 @@ const createBooking = asyncHandler(async (req: any, res: any) => {
                                     {
                                         return_url:`${process.env.FRONTEND_URL}/khalti.verify`,
                                         website_url:`${process.env.FRONTEND_URL}`,
-                                        
+                                        amount:totalpaisa,
+                                        purchase_order_id:booking._id.toString(),
+                                        purchase_order_name:`${hotel.hotelName}`,
+                                         customer_info: {
+                                                        "name": req.user.Name,
+                                                        "email": req.user.email,
+                                                        }
+                                    },
+                                    {
+                                         headers: {
+                                                    "Authorization": `Key ${process.env.KHALTI_SECRET_KEY}`,
+                                                    "Content-Type": "application/json",
+                                                    }
                                     }
                                 )
 
