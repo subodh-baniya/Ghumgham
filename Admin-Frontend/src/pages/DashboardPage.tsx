@@ -13,6 +13,15 @@ const DashboardPage: React.FC = () => {
     day: 'numeric',
   });
 
+  const getColorClass = (color: string) => {
+    const colors: Record<string, string> = {
+      blue: 'text-blue-500',
+      red: 'text-red-500',
+      green: 'text-green-500',
+    };
+    return colors[color] || 'text-gray-500';
+  };
+
   const roomTypes = [
     { type: 'Single sharing', booked: 2, total: 30, price: 568, deals: true },
     { type: 'Double sharing', booked: 2, total: 35, price: 1068, deals: true },
@@ -98,8 +107,8 @@ const DashboardPage: React.FC = () => {
               { label: 'Inspected', value: '47 rooms', color: 'green' },
             ].map((item, idx) => (
               <div key={idx}>
-                <div className={`text-sm font-semibold text-${item.color}-500`}>
-                  {item.label}
+                <div className={getColorClass(item.color)}>
+                  <span className="text-sm font-semibold">{item.label}</span>
                 </div>
                 <div className="text-xs text-gray-600">{item.value}</div>
               </div>
