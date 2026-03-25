@@ -1,14 +1,24 @@
 
-import { apiError } from "./Utils/api.error.js";
+import { apiError } from "./Utils/response/api.error.js";
 import { asyncHandler } from "./Utils/asynchandler.js";
-import {apiResponse} from "./Utils/api.response.js";
+import {apiResponse} from "./Utils/response/api.response.js";
 import { UserModel } from "./Model/User.model.js";
 import { hotelModel } from "./Model/Hotel.model.js";
-import { roleMiddleware } from "./middleware/role.middleware.js";
+import {
+  authenticate,
+  checkRole,
+  checkRoles,
+  adminMiddleware,
+  hotelOwnerMiddleware,
+  userMiddleware,
+  adminOrOwnerMiddleware,
+  anyAuthenticatedMiddleware,
+  checkOwnership,
+} from "./middleware/role.middleware.js";
 import { passwordCheck } from "./Utils/Func/password.js";
-import {connectDB} from "./Utils/connect.db.js"
-import { sendEmail } from "./Utils/resendmail.js";
-import { uploadToCloudinary } from "./Utils/cloudinary.js";
+import {connectDB} from "./Utils/Func/connect.db.js"
+import { sendEmail } from "./Utils/Func/resendmail.js";
+import { uploadToCloudinary } from "./Utils/Func/cloudinary.js";
 import { roomModel } from "./Model/Room.model.js";
 import { bookingModel } from "./Model/Booking.model.js";
 import dotenv from "dotenv";
@@ -17,8 +27,6 @@ dotenv.config({
     path: "./.env"
 });
 
-
-
 export {
     connectDB,
     UserModel,
@@ -26,7 +34,15 @@ export {
     asyncHandler,
     apiResponse,
     hotelModel,
-    roleMiddleware,
+    authenticate,
+    checkRole,
+    checkRoles,
+    adminMiddleware,
+    hotelOwnerMiddleware,
+    userMiddleware,
+    adminOrOwnerMiddleware,
+    anyAuthenticatedMiddleware,
+    checkOwnership,
     passwordCheck,
     sendEmail,
     roomModel,
