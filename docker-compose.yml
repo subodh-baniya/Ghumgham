@@ -8,7 +8,6 @@ services:
       - "3000:3000"
     env_file:
       - ./Travallee-Backend/Services/Auth/.env
-      - ./Travallee-Backend/Packages/.env
     volumes:
       - ./Travallee-Backend/Services/Auth/src:/app/src
       - /app/node_modules
@@ -24,7 +23,6 @@ services:
       - "4001:4001"
     env_file:
       - ./Travallee-Backend/Services/admin/.env
-      - ./Travallee-Backend/Packages/.env
     volumes:
       - ./Travallee-Backend/Services/admin/src:/app/src
       - /app/node_modules
@@ -40,7 +38,6 @@ services:
       - "5002:5002"
     env_file:
       - ./Travallee-Backend/Services/booking/.env
-      - ./Travallee-Backend/Packages/.env
     volumes:
       - ./Travallee-Backend/Services/booking/src:/app/src
       - /app/node_modules
@@ -56,7 +53,6 @@ services:
       - "3001:3001"
     env_file:
       - ./Travallee-Backend/Services/Hotel/.env
-      - ./Travallee-Backend/Packages/.env
     volumes:
       - ./Travallee-Backend/Services/Hotel/src:/app/src
       - /app/node_modules
@@ -73,7 +69,6 @@ services:
       - "6000:6000"
     env_file:
       - ./Travallee-Backend/Services/notifications/.env
-      - ./Travallee-Backend/Packages/.env
     volumes:
       - ./Travallee-Backend/Services/notifications/src:/app/src
       - /app/node_modules
