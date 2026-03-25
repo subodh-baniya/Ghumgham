@@ -10,12 +10,12 @@ const sendEmail = async (
 ): Promise<any> => {
   try {
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com", // ✅ correct Gmail SMTP host
+      host: "smtp.gmail.com", 
       port: 587,
       secure: false, // false for 587 (STARTTLS)
       auth: {
-        user: "kcprabin2063@gmail.com",
-        pass: "xehbbndscdhvkrdm"
+        user: process.env.GMAIL_USER as string,
+        pass: process.env.GMAIL_PASS as string
       },
     });
     const mailOptions = {
@@ -26,10 +26,7 @@ const sendEmail = async (
         html ||
         "<p>Thank you for joining Travallee. We are excited to have you on board!</p>",
     };
-
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent:", info.response);
-    return info;
+    await transporter.sendMail(mailOptions);
   } catch (error) {
     console.error("Nodemailer error:", error);
     throw new Error(
@@ -37,6 +34,5 @@ const sendEmail = async (
     );
   }
 };
-sendEmail("kcprabin2063@gmail.com", "Test Email", "<p>This is a test email.</p>");
 
 export { sendEmail };
