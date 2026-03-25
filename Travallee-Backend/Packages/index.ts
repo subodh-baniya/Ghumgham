@@ -5,10 +5,10 @@ import {apiResponse} from "./Utils/api.response.js";
 import { UserModel } from "./Model/User.model.js";
 import { hotelModel } from "./Model/Hotel.model.js";
 import { roleMiddleware } from "./middleware/role.middleware.js";
-import {passwordCheck} from "./middleware/password.middleware.js";
+import { passwordCheck } from "./Utils/Func/password.js";
 import {connectDB} from "./Utils/connect.db.js"
 import { sendEmail } from "./Utils/resendmail.js";
-import { uploadVideoToCloudinary } from "./Utils/cloudinary.js";
+import { uploadToCloudinary } from "./Utils/cloudinary.js";
 import { roomModel } from "./Model/Room.model.js";
 import { bookingModel } from "./Model/Booking.model.js";
 import dotenv from "dotenv";
@@ -31,5 +31,5 @@ export {
     sendEmail,
     roomModel,
     bookingModel,
-    uploadVideoToCloudinary
+    uploadToCloudinary
 }

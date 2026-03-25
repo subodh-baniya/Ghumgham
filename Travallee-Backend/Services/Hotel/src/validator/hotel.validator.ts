@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { is } from 'zod/locales';
 
 export const createHotelSchema = zod.object({
-  userId: zod.string().min(1, 'User ID is required'),
+  userID: zod.string().min(1, 'User ID is required'),
   ownerName: zod.string().min(1, 'Owner name is required'),
   hotelDescription: zod.string().min(1, 'Hotel description is required'),
   hotelLocation: zod.string().min(1, 'Hotel location is required'),

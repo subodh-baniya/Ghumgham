@@ -118,11 +118,6 @@ const roomSchema = new mongoose.Schema(
       required: true,
     },
 
-    imageUrls: {
-      type: [String],
-      required: true,
-    },
-
     // Room Facilities
     isAccessible: {
       type: Boolean,
