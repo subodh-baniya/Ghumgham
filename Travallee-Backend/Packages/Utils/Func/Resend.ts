@@ -1,7 +1,5 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API);
-
 interface EmailResponse {
   id: string;
   from: string;
@@ -24,6 +22,7 @@ const sendEmail = async (
       throw new Error("RESEND_API environment variable is not set");
     }
 
+    const resend = new Resend(process.env.RESEND_API);
     const emailSubject = subject || "Welcome to Travallee!";
 
     const response = await resend.emails.send({
