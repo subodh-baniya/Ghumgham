@@ -237,7 +237,10 @@ const sendOTP = asyncHandler(async (req: any, res: any) => {
   await user.save();
 
   try {
-    await sendEmail(email, "Your OTP Code", `Your OTP code is: ${otp}`);
+    await sendEmail(email, "Your OTP Code - Travallee", undefined, {
+      name: user.Name || user.Username,
+      otp: otp
+    });
   } catch (error) {
     return apiError(res, 500, "Failed to send OTP email");
   }

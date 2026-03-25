@@ -1,37 +1,48 @@
-import nodemailer from "nodemailer";
-import dotenv from "dotenv";
+import { Resend } from "resend";
 
-dotenv.config({ path: "./.env" });
+const resend = new Resend(process.env.RESEND_API);
+
+interface EmailResponse {
+  id: string;
+  from: string;
+  to: string;
+  created_at: string;
+}
 
 const sendEmail = async (
   to: string,
   subject?: string,
   html?: string,
-): Promise<any> => {
+  options?: { name?: string },
+): Promise<EmailResponse> => {
   try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com", 
-      port: 587,
-      secure: false, // false for 587 (STARTTLS)
-      auth: {
-        user: process.env.GMAIL_USER as string,
-        pass: process.env.GMAIL_PASS as string
-      },
-    });
-    const mailOptions = {
-      from: process.env.GMAIL_USER as string,
+    if (!to) {
+      throw new Error("Recipient email is required");
+    }
+
+    if (!process.env.RESEND_API) {
+      throw new Error("RESEND_API environment variable is not set");
+    }
+
+    const emailSubject = subject || "Welcome to Travallee!";
+
+    const response = await resend.emails.send({
+      from: "Travallee <noreply@travallee.com>",
       to,
-      subject: subject || "Welcome to Travallee!",
-      html:
-        html ||
-        "<p>Thank you for joining Travallee. We are excited to have you on board!</p>",
-    };
-    await transporter.sendMail(mailOptions);
+      subject: emailSubject,
+      html: html || `<p>Hello ${options?.name || "User"},</p>`,
+    });
+
+    if (response.error) {
+      console.error(`[ Email Error] Failed to send: ${response.error.message}`);
+      throw new Error(response.error.message);
+    }
+
+    return response.data as EmailResponse;
   } catch (error) {
-    console.error("Nodemailer error:", error);
-    throw new Error(
-      error instanceof Error ? error.message : "Failed to send email",
-    );
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to send email";
+    throw new Error(errorMessage);
   }
 };
 
