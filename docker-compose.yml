@@ -1,0 +1,104 @@
+services:
+  auth:
+    build:
+      context: .
+      dockerfile: ./Travallee-Backend/Services/Auth/Dockerfile
+    container_name: auth_service
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./Travallee-Backend/Services/Auth/.env
+    volumes:
+      - ./Travallee-Backend/Services/Auth/src:/app/src
+      - /app/node_modules
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  admin:
+    build:
+      context: .
+      dockerfile: ./Travallee-Backend/Services/admin/Dockerfile
+    ports:
+      - "4001:4001"
+    env_file:
+      - ./Travallee-Backend/Services/admin/.env
+    volumes:
+      - ./Travallee-Backend/Services/admin/src:/app/src
+      - /app/node_modules
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  bookings:
+    build:
+      context: .
+      dockerfile: ./Travallee-Backend/Services/booking/Dockerfile
+    ports:
+      - "5002:5002"
+    env_file:
+      - ./Travallee-Backend/Services/booking/.env
+    volumes:
+      - ./Travallee-Backend/Services/booking/src:/app/src
+      - /app/node_modules
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  hotel:
+    build:
+      context: .
+      dockerfile: ./Travallee-Backend/Services/Hotel/Dockerfile
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./Travallee-Backend/Services/Hotel/.env
+    volumes:
+      - ./Travallee-Backend/Services/Hotel/src:/app/src
+      - /app/node_modules
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  admin-frontend:
+    build:
+      context: .
+      dockerfile: ./Admin-Frontend/Dockerfile
+    container_name: admin_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:4001
+    depends_on:
+      - admin
+    restart: unless-stopped
+
+  notifications:
+    build:
+      context: .
+      dockerfile: ./Travallee-Backend/Services/notifications/Dockerfile
+    ports:
+      - "6000:6000"
+    env_file:
+      - ./Travallee-Backend/Services/notifications/.env
+    volumes:
+      - ./Travallee-Backend/Services/notifications/src:/app/src
+      - /app/node_modules
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: mongo:7
+    container_name: mongo_db
+    command: mongod --quiet --logpath /dev/null
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+    logging:
+      driver: "none"
+
+volumes:
+  mongo_data:
