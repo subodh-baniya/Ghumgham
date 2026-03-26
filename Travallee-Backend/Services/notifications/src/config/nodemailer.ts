@@ -1,5 +1,4 @@
-/// <reference types="node" />
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
 interface EmailResponse {
   id: string;
@@ -8,7 +7,7 @@ interface EmailResponse {
   created_at: string;
 }
 
-const sendEmail = async (
+const sendEmailNodeMailer = async (
   to: string,
   subject?: string,
   html?: string,
@@ -19,27 +18,37 @@ const sendEmail = async (
       throw new Error("Recipient email is required");
     }
 
-    if (!process.env.RESEND_API) {
-      throw new Error("RESEND_API environment variable is not set");
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+      throw new Error(
+        "Gmail credentials (GMAIL_USER, GMAIL_APP_PASSWORD) environment variables are not set",
+      );
     }
 
-    // Create Resend instance lazily when function is called
-    const resend = new Resend(process.env.RESEND_API);
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com", // FIXED
+      port: 587,
+      secure: false, // true for port 465
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+    });
+
     const emailSubject = subject || "Welcome to Travallee!";
 
-    const response = await resend.emails.send({
-      from: "Travallee <noreply@travallee.com>",
+    const response = await transporter.sendMail({
+      from: process.env.GMAIL_USER,
       to,
       subject: emailSubject,
       html: html || `<p>Hello ${options?.name || "User"},</p>`,
     });
 
-    if (response.error) {
-      console.error(`[ Email Error] Failed to send: ${response.error.message}`);
-      throw new Error(response.error.message);
-    }
-
-    return response.data as EmailResponse;
+    return {
+      id: response.messageId || "unknown",
+      from: process.env.GMAIL_USER,
+      to,
+      created_at: new Date().toISOString(),
+    };
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Failed to send email";
@@ -47,4 +56,4 @@ const sendEmail = async (
   }
 };
 
-export { sendEmail };
+export { sendEmailNodeMailer };
