@@ -24,8 +24,13 @@ const emailWorkerRegister = new Worker(
         view_online_link: process.env.APP_URL || 'https://travallee.com',
       });
       
-      await sendEmailNodeMailer(to, subject, html);
-      await sendEmail(to, subject, html);
+  
+      try {
+        await sendEmail(to, subject, html);
+      } catch (resendError) {
+        console.warn('Resend API failed, attempting fallback...', resendError);
+        await sendEmailNodeMailer(to, subject, html);
+      }
       
       console.log(`Email sent successfully to ${to}`);
       return { success: true, messageId: job.id };
