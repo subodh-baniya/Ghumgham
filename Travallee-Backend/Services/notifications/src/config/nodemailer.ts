@@ -1,4 +1,3 @@
-
 import nodemailer from "nodemailer";
 
 interface EmailResponse {
@@ -20,11 +19,15 @@ const sendEmailNodeMailer = async (
     }
 
     if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
-      throw new Error("Gmail credentials (GMAIL_USER, GMAIL_APP_PASSWORD) environment variables are not set");
+      throw new Error(
+        "Gmail credentials (GMAIL_USER, GMAIL_APP_PASSWORD) environment variables are not set",
+      );
     }
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com", // FIXED
+      port: 587,
+      secure: false, // true for port 465
       auth: {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_APP_PASSWORD,

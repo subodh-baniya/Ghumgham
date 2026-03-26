@@ -18,18 +18,18 @@ const emailWorkerRegister = new Worker(
 
       const html = getWelcomeLoginTemplate({
         user_name: Name,
-        app_link: process.env.APP_URL || 'https://travallee.com',
-        unsubscribe_link: process.env.APP_URL + '/unsubscribe' || 'https://travallee.com/unsubscribe',
-        preferences_link: process.env.APP_URL + '/preferences' || 'https://travallee.com/preferences',
-        view_online_link: process.env.APP_URL || 'https://travallee.com',
+        app_link: process.env.APP_URL || 'randomd ata',
+        unsubscribe_link: process.env.APP_URL + '/unsubscribe' || 'randoanf',
+        preferences_link: process.env.APP_URL + '/preferences' || 'and',
+        view_online_link: process.env.APP_URL || 'ajksdgda',
       });
       
   
       try {
-        await sendEmail(to, subject, html);
-      } catch (resendError) {
-        console.warn('Resend API failed, attempting fallback...', resendError);
         await sendEmailNodeMailer(to, subject, html);
+      } catch (error: any) {
+        console.warn('Resend API failed, attempting fallback...', error);
+         await sendEmail(to, subject, html);
       }
       
       console.log(`Email sent successfully to ${to}`);
@@ -48,16 +48,5 @@ const emailWorkerRegister = new Worker(
   }
 );
 
-emailWorkerRegister.on('completed', (job: Job) => {
-  console.log(` Email job ${job.id} completed`);
-});
-
-emailWorkerRegister .on('failed', (job: Job | undefined, err: Error) => {
-  console.error(` Email job ${job?.id} failed:`, err.message);
-});
-
-emailWorkerRegister.on('error', (err: Error) => {
-  console.error('Email worker error:', err);
-});
 
 
