@@ -1,6 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const DashboardPage: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [staffForm, setStaffForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    position: '',
+    department: 'admin',
+  });
+
+  const handleStaffChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setStaffForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleAddStaff = () => {
+    if (staffForm.name && staffForm.email && staffForm.position) {
+      console.log('Adding staff:', staffForm);
+      setStaffForm({ name: '', email: '', phone: '', position: '', department: 'admin' });
+      setIsModalOpen(false);
+    }
+  };
+
   return (
     <>
       <div className="page-header">
@@ -10,9 +32,114 @@ const DashboardPage: React.FC = () => {
         </div>
         <div className="header-right">
           <div className="btn-notif">🔔</div>
-          <button className="btn-primary">+ New Booking</button>
         </div>
       </div>
+
+      {/* Add Staff Section */}
+      <div className="add-staff-section">
+        <div className="add-staff-header">
+          <h3 className="add-staff-title">Quick Actions</h3>
+          <button 
+            className="add-staff-btn"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <span className="icon">👤</span> Add Staff
+          </button>
+        </div>
+      </div>
+
+      {/* Add Staff Modal */}
+      {isModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 className="modal-title">Add New Staff Member</h2>
+              <button 
+                className="modal-close"
+                onClick={() => setIsModalOpen(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="form-group">
+                <label className="form-label">Full Name *</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={staffForm.name}
+                  onChange={handleStaffChange}
+                  placeholder="Enter staff name"
+                  className="form-input"
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Email *</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={staffForm.email}
+                  onChange={handleStaffChange}
+                  placeholder="staff@hotel.com"
+                  className="form-input"
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Phone</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={staffForm.phone}
+                  onChange={handleStaffChange}
+                  placeholder="+1-555-0000"
+                  className="form-input"
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Position *</label>
+                <input
+                  type="text"
+                  name="position"
+                  value={staffForm.position}
+                  onChange={handleStaffChange}
+                  placeholder="e.g., Manager, Housekeeper"
+                  className="form-input"
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Department</label>
+                <select
+                  name="department"
+                  value={staffForm.department}
+                  onChange={handleStaffChange}
+                  className="form-select"
+                >
+                  <option value="admin">Administration</option>
+                  <option value="housekeeping">Housekeeping</option>
+                  <option value="reception">Reception</option>
+                  <option value="maintenance">Maintenance</option>
+                  <option value="kitchen">Kitchen</option>
+                </select>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button 
+                className="btn-secondary"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn-primary"
+                onClick={handleAddStaff}
+              >
+                Add Staff
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="stats-grid">
         <div className="stat-card c1">
           <div className="stat-label">Total Revenue</div>
