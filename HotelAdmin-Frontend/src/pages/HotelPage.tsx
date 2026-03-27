@@ -3,7 +3,6 @@ import Layout from '../components/layout/Layout';
 import Card from '../components/ui/Card';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
-import Modal from '../components/ui/Modal';
 
 const HotelPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);

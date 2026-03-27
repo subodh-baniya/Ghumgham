@@ -1,106 +1,205 @@
-import React, { useState } from 'react';
-import Layout from '../components/layout/Layout';
-import Card from '../components/ui/Card';
-import Badge from '../components/ui/Badge';
-
-interface Booking {
-  id: string;
-  guestName: string;
-  roomNumber: string;
-  checkIn: string;
-  checkOut: string;
-  totalPrice: number;
-  status: 'pending' | 'confirmed' | 'completed';
-}
+import React from 'react';
 
 const BookingsPage: React.FC = () => {
-  const [bookings] = useState<Booking[]>([
-    {
-      id: '1',
-      guestName: 'Alice Johnson',
-      roomNumber: '105',
-      checkIn: '2025-04-01',
-      checkOut: '2025-04-03',
-      totalPrice: 300,
-      status: 'confirmed',
-    },
-    {
-      id: '2',
-      guestName: 'Bob Wilson',
-      roomNumber: '102',
-      checkIn: '2025-04-02',
-      checkOut: '2025-04-05',
-      totalPrice: 450,
-      status: 'pending',
-    },
-    {
-      id: '3',
-      guestName: 'Carol Davis',
-      roomNumber: '200',
-      checkIn: '2025-03-28',
-      checkOut: '2025-03-30',
-      totalPrice: 200,
-      status: 'completed',
-    },
-  ]);
-
   return (
-    <Layout title="Bookings">
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <p className="text-slate-400 text-sm">Pending Bookings</p>
-            <p className="text-3xl font-bold text-yellow-400 mt-2">
-              {bookings.filter((b) => b.status === 'pending').length}
-            </p>
-          </Card>
-          <Card>
-            <p className="text-slate-400 text-sm">Confirmed Bookings</p>
-            <p className="text-3xl font-bold text-green-400 mt-2">
-              {bookings.filter((b) => b.status === 'confirmed').length}
-            </p>
-          </Card>
-          <Card>
-            <p className="text-slate-400 text-sm">Completed Bookings</p>
-            <p className="text-3xl font-bold text-blue-400 mt-2">
-              {bookings.filter((b) => b.status === 'completed').length}
-            </p>
-          </Card>
+    <>
+      <div className="page-header">
+        <div>
+          <div className="page-title">Reservations</div>
+          <div className="page-sub">All guest bookings</div>
         </div>
-
-        <Card>
-          <h2 className="text-lg font-semibold text-white mb-4">Recent Bookings</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-slate-700 dark:bg-slate-800">
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-slate-200">Guest</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-slate-200">Room</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-slate-200">Check-in</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-slate-200">Check-out</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-slate-200">Price</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-slate-200">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {bookings.map((booking) => (
-                  <tr key={booking.id} className="border-b border-slate-700 hover:bg-slate-800 transition">
-                    <td className="px-6 py-4 text-white font-medium">{booking.guestName}</td>
-                    <td className="px-6 py-4 text-slate-300">{booking.roomNumber}</td>
-                    <td className="px-6 py-4 text-slate-300">{booking.checkIn}</td>
-                    <td className="px-6 py-4 text-slate-300">{booking.checkOut}</td>
-                    <td className="px-6 py-4 text-green-400 font-semibold">${booking.totalPrice}</td>
-                    <td className="px-6 py-4">
-                      <Badge status={booking.status} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
+        <div className="header-right">
+          <button className="btn-primary">+ New Reservation</button>
+        </div>
       </div>
-    </Layout>
+      <div className="stats-grid">
+        <div className="stat-card c1">
+          <div className="stat-label">Total Bookings</div>
+          <div className="stat-value">
+            142 <small>this month</small>
+          </div>
+          <div className="badge up">↑ 8% vs last</div>
+        </div>
+        <div className="stat-card c2">
+          <div className="stat-label">Confirmed</div>
+          <div className="stat-value">98</div>
+          <div className="badge up">69% of total</div>
+        </div>
+        <div className="stat-card c3">
+          <div className="stat-label">Pending</div>
+          <div className="stat-value">31</div>
+          <div className="badge ne">Awaiting confirm</div>
+        </div>
+        <div className="stat-card c4">
+          <div className="stat-label">Cancelled</div>
+          <div className="stat-value">13</div>
+          <div className="badge dn">↑ 2 today</div>
+        </div>
+      </div>
+      <div className="panel">
+        <div className="panel-header">
+          <div className="panel-title">
+            All Reservations{' '}
+            <span style={{ fontSize: '13px', color: 'var(--muted)', fontFamily: "'DM Sans'" }}>
+              (142)
+            </span>
+          </div>
+        </div>
+        <div className="fbar">
+          <input type="text" placeholder="🔍  Search guest or room..." />
+          <select>
+            <option>All Status</option>
+            <option>Confirmed</option>
+            <option>Pending</option>
+            <option>Cancelled</option>
+            <option>Checked Out</option>
+          </select>
+          <select>
+            <option>All Room Types</option>
+            <option>Standard</option>
+            <option>Deluxe</option>
+            <option>Suite</option>
+          </select>
+          <input type="date" style={{ width: '140px' }} />
+        </div>
+        <table className="tbl">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Guest</th>
+              <th>Room</th>
+              <th>Type</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style={{ color: 'var(--muted)' }}>R-1081</td>
+              <td>Priya Sharma</td>
+              <td>101</td>
+              <td>Deluxe</td>
+              <td>Mar 27</td>
+              <td>Mar 29</td>
+              <td>Rs. 8,400</td>
+              <td>
+                <span className="pill p-cfm">Confirmed</span>
+              </td>
+              <td>
+                <span style={{ cursor: 'pointer', color: 'var(--gold)', fontSize: '12px' }}>
+                  ✏ Edit
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ color: 'var(--muted)' }}>R-1082</td>
+              <td>David Lee</td>
+              <td>310</td>
+              <td>Suite</td>
+              <td>Mar 27</td>
+              <td>Apr 1</td>
+              <td>Rs. 42,000</td>
+              <td>
+                <span className="pill p-cfm">Confirmed</span>
+              </td>
+              <td>
+                <span style={{ cursor: 'pointer', color: 'var(--gold)', fontSize: '12px' }}>
+                  ✏ Edit
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ color: 'var(--muted)' }}>R-1083</td>
+              <td>Maya Karki</td>
+              <td>217</td>
+              <td>Standard</td>
+              <td>Mar 27</td>
+              <td>Mar 29</td>
+              <td>Rs. 4,200</td>
+              <td>
+                <span className="pill p-pnd">Pending</span>
+              </td>
+              <td>
+                <span style={{ cursor: 'pointer', color: 'var(--gold)', fontSize: '12px' }}>
+                  ✏ Edit
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ color: 'var(--muted)' }}>R-1084</td>
+              <td>Raj Maharjan</td>
+              <td>105</td>
+              <td>Deluxe</td>
+              <td>Mar 28</td>
+              <td>Mar 31</td>
+              <td>Rs. 12,600</td>
+              <td>
+                <span className="pill p-pnd">Pending</span>
+              </td>
+              <td>
+                <span style={{ cursor: 'pointer', color: 'var(--gold)', fontSize: '12px' }}>
+                  ✏ Edit
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ color: 'var(--muted)' }}>R-1079</td>
+              <td>Aisha Gurung</td>
+              <td>208</td>
+              <td>Standard</td>
+              <td>Mar 25</td>
+              <td>Mar 30</td>
+              <td>Rs. 10,500</td>
+              <td>
+                <span className="pill p-cfm">Confirmed</span>
+              </td>
+              <td>
+                <span style={{ cursor: 'pointer', color: 'var(--gold)', fontSize: '12px' }}>
+                  ✏ Edit
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ color: 'var(--muted)' }}>R-1078</td>
+              <td>Sujan Poudel</td>
+              <td>402</td>
+              <td>Suite</td>
+              <td>Mar 24</td>
+              <td>Mar 27</td>
+              <td>Rs. 25,200</td>
+              <td>
+                <span className="pill p-out">Checked Out</span>
+              </td>
+              <td>
+                <span style={{ cursor: 'pointer', color: 'var(--muted)', fontSize: '12px' }}>
+                  View
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ color: 'var(--muted)' }}>R-1077</td>
+              <td>Karen White</td>
+              <td>304</td>
+              <td>Deluxe</td>
+              <td>Mar 23</td>
+              <td>Mar 26</td>
+              <td>Rs. 12,600</td>
+              <td>
+                <span className="pill p-can">Cancelled</span>
+              </td>
+              <td>
+                <span style={{ cursor: 'pointer', color: 'var(--muted)', fontSize: '12px' }}>
+                  View
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 };
 

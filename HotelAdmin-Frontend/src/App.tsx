@@ -1,17 +1,8 @@
-import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import AppRoutes from './routes/AppRoutes';
-import { AuthProvider } from './contexts/AuthContext';
+import HotelAdminLayout from './components/layout/HotelAdminLayout';
 import './App.css';
 
 function App() {
-  return (
-    <Router>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
-    </Router>
-  );
+  return <HotelAdminLayout />;
 }
 
 export default App;

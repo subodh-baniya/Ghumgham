@@ -9,11 +9,28 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ title, children }) => {
   return (
-    <div className="flex h-screen bg-slate-900 dark:bg-slate-950 text-slate-100">
+    <div style={{
+      display: 'flex',
+      height: '100vh',
+      background: 'var(--bg)',
+      color: 'var(--text)',
+    }}>
       <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}>
         <TopBar title={title} />
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main style={{
+          flex: 1,
+          overflowY: 'auto',
+          padding: '20px',
+          background: 'var(--bg)',
+        }}>
+          {children}
+        </main>
       </div>
     </div>
   );

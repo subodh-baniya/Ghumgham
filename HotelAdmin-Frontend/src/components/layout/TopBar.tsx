@@ -6,17 +6,62 @@ interface TopBarProps {
 
 const TopBar: React.FC<TopBarProps> = ({ title }) => {
   return (
-    <div className="bg-slate-800 dark:bg-slate-900 border-b border-slate-700 dark:border-slate-800 px-6 py-4 flex items-center justify-between">
-      <h1 className="text-2xl font-bold text-white">{title}</h1>
-      <div className="flex items-center gap-4">
-        <div className="w-40 px-3 py-2 bg-slate-700 dark:bg-slate-800 rounded-lg text-slate-300 text-sm focus:outline-none">
+    <div style={{
+      background: 'var(--surface)',
+      borderBottom: '1px solid var(--border)',
+      padding: '12px 20px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    }}>
+      <h1 style={{
+        fontFamily: "'Playfair Display', serif",
+        fontSize: '20px',
+        fontWeight: 500,
+        color: 'var(--text)',
+      }}>
+        {title}
+      </h1>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px',
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          background: 'var(--surface2)',
+          border: '1px solid var(--border)',
+          borderRadius: '8px',
+          padding: '6px 12px',
+        }}>
+          <span style={{ fontSize: '14px', color: 'var(--muted)' }}>🔍</span>
           <input
             type="text"
             placeholder="Search..."
-            className="w-full bg-transparent text-white placeholder-slate-400 outline-none"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: 'var(--text)',
+              fontSize: '12px',
+              outline: 'none',
+              width: '150px',
+            }}
           />
         </div>
-        <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold">
+        <div style={{
+          width: '32px',
+          height: '32px',
+          borderRadius: '50%',
+          background: 'var(--gold)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#0f0e0c',
+          fontWeight: 600,
+          fontSize: '14px',
+        }}>
           A
         </div>
       </div>

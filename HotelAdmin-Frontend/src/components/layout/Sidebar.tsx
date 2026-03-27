@@ -1,61 +1,244 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
-  const { logout } = useAuth();
-  const [isOpen, setIsOpen] = useState(true);
+  const navigate = useNavigate();
+  const [expandedSections, setExpandedSections] = useState<string[]>(['main']);
 
-  const isActive = (path: string) => location.pathname === path;
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev =>
+      prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]
+    );
+  };
 
-  const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: '■' },
-    { path: '/hotel', label: 'Hotel Data', icon: '◆' },
-    { path: '/rooms', label: 'Rooms', icon: '▢' },
-    { path: '/employees', label: 'Employees', icon: '▲' },
-    { path: '/bookings', label: 'Bookings', icon: '▣' },
-    { path: '/earnings', label: 'Earnings', icon: '◀' },
-    { path: '/reviews', label: 'Reviews', icon: '✦' },
-    { path: '/chat', label: 'Chat', icon: '◎' },
-  ];
+  const isActive = (path: string) => {
+    return location.pathname.includes(path);
+  };
 
   return (
-    <div className={`bg-slate-900 dark:bg-slate-950 text-white transition-all duration-300 ${isOpen ? 'w-64' : 'w-20'} min-h-screen border-r border-slate-800`}>
-      <div className="p-4 border-b border-slate-800 flex items-center justify-between">
-        {isOpen && <h1 className="font-bold text-lg">GH Admin</h1>}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="text-slate-400 hover:text-white transition-colors"
-        >
-          ☰
-        </button>
+    <div style={{
+      width: '240px',
+      height: '100vh',
+      background: 'var(--surface)',
+      borderRight: '1px solid var(--border)',
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'hidden',
+      overflowY: 'auto',
+    }}>
+      {/* Logo */}
+      <div style={{
+        padding: '16px 14px',
+        borderBottom: '1px solid var(--border)',
+      }}>
+        <div style={{
+          fontFamily: "'Playfair Display', serif",
+          fontSize: '18px',
+          fontWeight: 600,
+          color: 'var(--gold)',
+        }}>
+          Luxe
+        </div>
+        <div style={{ fontSize: '10px', color: 'var(--muted)', marginTop: '2px' }}>
+          HOTEL MANAGEMENT
+        </div>
       </div>
 
-      <nav className="mt-8">
-        {navItems.map((item) => (
-          <Link key={item.path} to={item.path}>
-            <div
-              className={`px-4 py-3 mx-2 rounded-lg flex items-center gap-3 transition-colors ${
-                isActive(item.path)
-                  ? 'bg-indigo-600 text-white'
-                  : 'text-slate-300 hover:bg-slate-800 dark:hover:bg-slate-800'
-              }`}
-            >
-              <span className="text-lg">{item.icon}</span>
-              {isOpen && <span className="text-sm">{item.label}</span>}
-            </div>
-          </Link>
-        ))}
-      </nav>
-
-      <div className="absolute bottom-4 left-0 right-0 px-4">
-        <button
-          onClick={logout}
-          className="w-full py-2 px-3 bg-red-900 hover:bg-red-800 transition-colors rounded-lg text-sm text-red-200"
+      {/* Menu */}
+      <div style={{ flex: 1, overflowY: 'auto' }}>
+        {/* Main Section */}
+        <div
+          onClick={() => toggleSection('main')}
+          style={{
+            padding: '12px 14px',
+            fontSize: '10px',
+            letterSpacing: '2px',
+            textTransform: 'uppercase',
+            color: 'var(--muted)',
+            cursor: 'pointer',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: '16px',
+          }}
         >
-          {isOpen ? 'Logout' : 'Out'}
-        </button>
+          <span>Main</span>
+          <span style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'transform 0.2s',
+            transform: expandedSections.includes('main') ? 'rotate(180deg)' : 'rotate(0)',
+          }}>
+            ▼
+          </span>
+        </div>
+        {expandedSections.includes('main') && (
+          <div>
+            {[
+              { label: 'Dashboard', path: '/dashboard', icon: '◆' },
+              { label: 'Reservations', path: '/bookings', icon: '📅' },
+              { label: 'Guests', path: '/guests', icon: '👤' },
+              { label: 'Messages', path: '/chat', icon: '💬' },
+            ].map((item) => (
+              <a
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '8px 14px',
+                  marginLeft: '8px',
+                  marginTop: '6px',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  textDecoration: 'none',
+                  color: isActive(item.path) ? 'var(--gold)' : 'var(--text)',
+                  background: isActive(item.path) ? 'rgba(201, 168, 76, 0.1)' : 'transparent',
+                  border: isActive(item.path) ? '1px solid rgba(201, 168, 76, 0.2)' : 'none',
+                  transition: 'all 0.2s',
+                  cursor: 'pointer',
+                }}
+              >
+                <span style={{ fontSize: '16px' }}>{item.icon}</span>
+                <span>{item.label}</span>
+              </a>
+            ))}
+          </div>
+        )}
+
+        {/* Operations Section */}
+        <div
+          onClick={() => toggleSection('operations')}
+          style={{
+            padding: '12px 14px',
+            fontSize: '10px',
+            letterSpacing: '2px',
+            textTransform: 'uppercase',
+            color: 'var(--muted)',
+            cursor: 'pointer',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: '16px',
+          }}
+        >
+          <span>Operations</span>
+          <span style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'transform 0.2s',
+            transform: expandedSections.includes('operations') ? 'rotate(180deg)' : 'rotate(0)',
+          }}>
+            ▼
+          </span>
+        </div>
+        {expandedSections.includes('operations') && (
+          <div>
+            {[
+              { label: 'Rooms', path: '/rooms', icon: '🛏' },
+              { label: 'Reviews', path: '/reviews', icon: '⭐' },
+            ].map((item) => (
+              <a
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '8px 14px',
+                  marginLeft: '8px',
+                  marginTop: '6px',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  textDecoration: 'none',
+                  color: isActive(item.path) ? 'var(--gold)' : 'var(--text)',
+                  background: isActive(item.path) ? 'rgba(201, 168, 76, 0.1)' : 'transparent',
+                  border: isActive(item.path) ? '1px solid rgba(201, 168, 76, 0.2)' : 'none',
+                  transition: 'all 0.2s',
+                  cursor: 'pointer',
+                }}
+              >
+                <span style={{ fontSize: '16px' }}>{item.icon}</span>
+                <span>{item.label}</span>
+              </a>
+            ))}
+          </div>
+        )}
+
+        {/* Business Section */}
+        <div
+          onClick={() => toggleSection('business')}
+          style={{
+            padding: '12px 14px',
+            fontSize: '10px',
+            letterSpacing: '2px',
+            textTransform: 'uppercase',
+            color: 'var(--muted)',
+            cursor: 'pointer',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: '16px',
+          }}
+        >
+          <span>Business</span>
+          <span style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'transform 0.2s',
+            transform: expandedSections.includes('business') ? 'rotate(180deg)' : 'rotate(0)',
+          }}>
+            ▼
+          </span>
+        </div>
+        {expandedSections.includes('business') && (
+          <div>
+            {[
+              { label: 'Finance', path: '/earnings', icon: '💰' },
+            ].map((item) => (
+              <a
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '8px 14px',
+                  marginLeft: '8px',
+                  marginTop: '6px',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  textDecoration: 'none',
+                  color: isActive(item.path) ? 'var(--gold)' : 'var(--text)',
+                  background: isActive(item.path) ? 'rgba(201, 168, 76, 0.1)' : 'transparent',
+                  border: isActive(item.path) ? '1px solid rgba(201, 168, 76, 0.2)' : 'none',
+                  transition: 'all 0.2s',
+                  cursor: 'pointer',
+                }}
+              >
+                <span style={{ fontSize: '16px' }}>{item.icon}</span>
+                <span>{item.label}</span>
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Profile Section */}
+      <div style={{
+        padding: '12px 14px',
+        borderTop: '1px solid var(--border)',
+        fontSize: '12px',
+      }}>
+        <div style={{ color: 'var(--text)' }}>Admin</div>
+        <div style={{ color: 'var(--muted)', fontSize: '11px', marginTop: '2px' }}>
+          profile@luxe.com
+        </div>
       </div>
     </div>
   );

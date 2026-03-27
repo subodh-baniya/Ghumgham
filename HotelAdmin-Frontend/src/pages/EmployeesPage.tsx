@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Layout from '../components/layout/Layout';
-import Card from '../components/ui/Card';
 import Input from '../components/ui/Input';
 import Select from '../components/ui/Select';
 import Button from '../components/ui/Button';
