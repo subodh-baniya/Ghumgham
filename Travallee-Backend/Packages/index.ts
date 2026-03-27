@@ -11,8 +11,11 @@ import {
   adminMiddleware,
   hotelOwnerMiddleware,
   userMiddleware,
+  superAdminMiddleware,
+  hotelAdminMiddleware,
   adminOrOwnerMiddleware,
   anyAuthenticatedMiddleware,
+  superAdminOrHotelAdminMiddleware,
   checkOwnership,
 } from "./middleware/role.middleware.js";
 import { passwordCheck } from "./Utils/Func/password.js";
@@ -34,8 +37,11 @@ export {
     adminMiddleware,
     hotelOwnerMiddleware,
     userMiddleware,
+    superAdminMiddleware,
+    hotelAdminMiddleware,
     adminOrOwnerMiddleware,
     anyAuthenticatedMiddleware,
+    superAdminOrHotelAdminMiddleware,
     checkOwnership,
     passwordCheck,
     roomModel,

@@ -14,6 +14,7 @@ export const UserZodSchema = zod.object({
     updatedAt: zod.date(),
     profileimage: zod.string().optional(),
     role: zod.string().optional(),
+    hotelId: zod.string().optional(),
     googleId: zod.string().optional(),
     isVerified: zod.boolean().optional(),
     otp: zod.number().optional(),
@@ -40,8 +41,9 @@ const UserSchema = new mongoose.Schema<UserType, UserModel, UserMethods>({
   profileimage: { type: String },
   role: { type: String ,
     default: "user",
-     enum: ["user", "admin" , "superadmin"]
+     enum: ["user", "admin" , "superadmin", "hotelAdmin"]
    },
+  hotelId: { type: String },
   googleId: { type: String },
   isVerified: { type: Boolean },
   otp: { type: Number },

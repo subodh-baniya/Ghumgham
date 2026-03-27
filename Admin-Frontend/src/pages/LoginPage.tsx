@@ -40,10 +40,12 @@ const LoginPage: React.FC = () => {
         localStorage.setItem('user', JSON.stringify({ ...userData, role: userRole }));
         login(userData.Username, password);
         
-        if (userRole === 'admin' || userRole === 'superadmin') {
+        if (userRole === 'superadmin') {
           navigate('/dashboard');
+        } else if (userRole === 'hotelAdmin') {
+          setError('Hotel Admins: Please use Hotel Admin Portal');
         } else {
-          setError('Access denied: You do not have admin privileges.');
+          setError('Access denied: You do not have super admin privileges.');
         }
       }
     } catch (err: any) {
