@@ -74,6 +74,18 @@ const HotelAdminLayout: React.FC = () => {
               <div className="role">Super Admin</div>
             </div>
           </div>
+          <button 
+            className="logout-btn"
+            onClick={() => {
+              alert('Logging out...');
+              // Add your logout logic here
+              // localStorage.removeItem('authToken');
+              // window.location.href = '/login';
+            }}
+            title="Logout"
+          >
+            <span className="icon">⎋</span> Logout
+          </button>
         </div>
       </aside>
 
