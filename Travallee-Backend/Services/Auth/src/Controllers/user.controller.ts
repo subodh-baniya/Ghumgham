@@ -5,15 +5,13 @@ import {
   UserModel,
   uploadToCloudinary,
   hotelModel,
-  roomModel,
-  redisConnection,
-  RegisterEmailJobData,
-  OTPEmailJobData, //@ts-ignore
+  roomModel, //@ts-ignore
 } from "@packages";
 import { loginSchema, registerSchema } from "../Schema/user.schema.js";
 import { z } from "zod";
-import { Queue, tryCatch } from "bullmq";
-import { response } from "express";
+import { Queue,  } from "bullmq";
+import { redisConnection } from "../config/redis.connection.js";
+
 
 const connection = redisConnection(
   process.env.REDIS_HOST as string,
@@ -23,6 +21,17 @@ const connection = redisConnection(
 const registerEmailQueue = new Queue<RegisterEmailJobData>("Register", {
   connection,
 });
+
+interface OTPEmailJobData {
+  Name: string;
+  otp: number;
+}
+
+interface RegisterEmailJobData {
+  userName: string;
+  to: string;
+  userId: string;
+}
 
 const otpQueue = new Queue<OTPEmailJobData>("OTP", {
   connection,
@@ -181,7 +190,7 @@ const getUserProfile = asyncHandler(async (req: any, res: any) => {
 });
 
 const updateUserProfile = asyncHandler(async (req: any, res: any) => {
-  const userId = req.user.id;
+  const userId = req.user.id ;
   const profileImage = req.file;
   const { Name, email, number } = req.body;
   if (!Name && !email && !number && !profileImage) {
