@@ -6,19 +6,25 @@ import {
   uploadToCloudinary,
   hotelModel,
   roomModel,
-   // @ts-ignore
+  redisConnection,
+  RegisterEmailJobData,
+  OTPEmailJobData, //@ts-ignore
 } from "@packages";
 import { loginSchema, registerSchema } from "../Schema/user.schema.js";
-import { redisConnection } from "../config/redis.connection.js";
 import { z } from "zod";
 import { Queue } from "bullmq";
 
-const registerEmailQueue = new Queue("Register", {
-  connection: redisConnection(process.env.REDIS_HOST as string ,Number(process.env.REDIS_PORT))
+const connection = redisConnection(
+  process.env.REDIS_HOST as string,
+  Number(process.env.REDIS_PORT)
+);
+
+const registerEmailQueue = new Queue<RegisterEmailJobData>("Register", {
+  connection,
 });
 
-const otpQueue = new Queue("OTP", {
-  connection: redisConnection(process.env.REDIS_HOST as string ,Number(process.env.REDIS_PORT))
+const otpQueue = new Queue<OTPEmailJobData>("OTP", {
+  connection,
 });
 
 const registerUser = asyncHandler(async (req: any, res: any) => {
@@ -48,12 +54,14 @@ const registerUser = asyncHandler(async (req: any, res: any) => {
     };
 
     try {
-      registerEmailQueue.add("Register", {
+      const emailData: RegisterEmailJobData = {
         userName: newUser.Name.toUpperCase(),
         to: newUser.email,
-      });
+        userId: newUser._id.toString(),
+      };
+      await registerEmailQueue.add("Register", emailData);
     } catch (error) {
-      console.log("error in processing email");
+      console.log("error in processing email:", error);
     }
 
     return apiResponse(
