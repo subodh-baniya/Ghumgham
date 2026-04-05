@@ -4,6 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View, Image, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as SecureStore from "expo-secure-store";
 import { useAuth } from "@/src/context/AuthContext";
 import {
   RealixColors,
@@ -47,23 +48,29 @@ export default function HomeScreen() {
     const fetchProfileImage = async () => {
       try {
         setProfileLoading(true);
-        console.log("📷 Fetching profile picture from:", API_PROFILE_IMAGE);
+        
+        const token = await SecureStore.getItemAsync("userToken");
+        
+        if (!token) {
+          setProfileLoading(false);
+          return;
+        }
+
         const response = await axios.get(API_PROFILE_IMAGE, {
-          withCredentials: true,
           headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
             Accept: "application/json",
           },
+          withCredentials: true,
           timeout: 10000,
         });
         
-        console.log("📷 Profile response:", response.data);
         if (response.data.success && response.data.data?.profilePicture) {
-          console.log("✅ Profile image loaded:", response.data.data.profilePicture);
           setProfileImage(response.data.data.profilePicture);
         }
       } catch (err: any) {
-        console.error("❌ Error fetching profile picture:", err.message);
+        // Silent error - avatar shows empty if profile fetch fails
       } finally {
         setProfileLoading(false);
       }
@@ -77,7 +84,6 @@ export default function HomeScreen() {
     const fetchFeaturedHotels = async () => {
       try {
         setLoading(true);
-        console.log("📍 Fetching from:", FEATURED_HOTEL);
         const response = await axios.get(FEATURED_HOTEL, {
           withCredentials: true,
           headers: {
@@ -87,17 +93,10 @@ export default function HomeScreen() {
           timeout: 15000,
         });
         
-        console.log("✅ Featured Hotels Response:", response.data);
         if (response.data.success && response.data.data) {
           setFeaturedHotels(response.data.data);
         }
       } catch (err: any) {
-        console.error("❌ Error fetching featured hotels:", err);
-        console.error("📍 Error details:", {
-          message: err.message,
-          code: err.code,
-          url: FEATURED_HOTEL,
-        });
         setError(err.message || "Failed to load featured hotels");
       } finally {
         setLoading(false);
