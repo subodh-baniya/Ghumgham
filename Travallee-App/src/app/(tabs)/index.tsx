@@ -47,6 +47,7 @@ export default function HomeScreen() {
     const fetchProfileImage = async () => {
       try {
         setProfileLoading(true);
+        console.log("📷 Fetching profile picture from:", API_PROFILE_IMAGE);
         const response = await axios.get(API_PROFILE_IMAGE, {
           withCredentials: true,
           headers: {
@@ -56,12 +57,13 @@ export default function HomeScreen() {
           timeout: 10000,
         });
         
+        console.log("📷 Profile response:", response.data);
         if (response.data.success && response.data.data?.profilePicture) {
-          setProfileImage(response.data.data.profilePicture);
           console.log("✅ Profile image loaded:", response.data.data.profilePicture);
+          setProfileImage(response.data.data.profilePicture);
         }
       } catch (err: any) {
-        console.warn("⚠️ Could not fetch profile image:", err.message);
+        console.error("❌ Error fetching profile picture:", err.message);
       } finally {
         setProfileLoading(false);
       }
@@ -137,9 +139,7 @@ export default function HomeScreen() {
                 source={{ uri: profileImage }}
                 style={styles.avatarImage}
               />
-            ) : (
-              <Text style={styles.avatarText}>{initials}</Text>
-            )}
+            ) : null}
           </Pressable>
 
           <View style={styles.locationWrap}>

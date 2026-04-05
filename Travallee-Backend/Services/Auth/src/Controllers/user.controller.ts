@@ -199,7 +199,7 @@ const updateUserProfile = asyncHandler(async (req: any, res: any) => {
   if (profileImage) {
     try {
       const response = await uploadToCloudinary(profileImage.path, "profile_pictures");
-      user.profileImage = response.secure_url;
+      user.profileimage = response;
     } catch (error: any) {
       console.error("Error uploading profile image to Cloudinary:", error);
       return apiError(res, 500, "Failed to upload profile image", error);
@@ -315,7 +315,7 @@ const getUserProfilePicture = asyncHandler(async (req: any, res: any) => {
     200,
     true,
     "User profile picture retrieved successfully",
-    { profilePicture: user.profileImage },
+    { profilePicture: user.profileimage }
   );
 });
 
