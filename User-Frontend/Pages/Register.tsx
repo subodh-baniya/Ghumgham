@@ -23,22 +23,24 @@ const Register = () => {
 
   }
 
-  const registerUser=(e:React.FormEvent<HTMLFormElement>)=>{
+  const registerUser=async(e:React.FormEvent<HTMLFormElement>)=>{
    try {
       e.preventDefault();
       const {confirmPassword,...rest}=form;
  
      if(confirmPassword==""||rest.username==""||rest.name==""||rest.email==""||rest.password==""){
        console.log("all fields are required");
+       return;
      }
  
      if(confirmPassword!=rest.password){
-       console.log("passwords should be same")
+       console.log("passwords should be same");
+       return;
      }
  
       
-      const res=axios.post(`${import.meta.env.VITE_AUTH_API_BASE_URL}/register`,rest);
-      console.log(res);
+      const res=await axios.post(`${import.meta.env.VITE_AUTH_API_BASE_URL}/register`,rest);
+      console.log(res.data);
    } catch (error) {
     console.log(error);
    }
