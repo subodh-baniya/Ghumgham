@@ -1,6 +1,8 @@
+import { useNavigate } from "react-router-dom"
 import { Typewriter } from "react-simple-typewriter"
 
 const Herosection = () => {
+  const navigateto=useNavigate();
   return (
     
     <div className="relative min-h-screen flex items-center justify-center">
@@ -42,8 +44,8 @@ const Herosection = () => {
           <button className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition cursor-pointer">
             Login
           </button>
-          <button className="px-6 py-3 bg-white text-blue-600 border border-blue-600 rounded-lg shadow hover:bg-blue-50 transition cursor-pointer">
-            Sign Up
+          <button className="px-6 py-3 bg-white text-blue-600 border border-blue-600 rounded-lg shadow hover:bg-blue-50 transition cursor-pointer" onClick={()=>{navigateto("/register")}}>
+            Register
           </button>
         </div>
       </main>

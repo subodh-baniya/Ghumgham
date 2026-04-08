@@ -5,12 +5,13 @@ import AboutUs from "../Pages/AboutUs"
 import Services from "../Pages/Services"
 import ContactUs from "../Pages/ContactUs"
 import Herosection from "../Components/Herosection"
+import Register from "../Pages/Register"
 
 const router=createBrowserRouter(
     createRoutesFromElements(
         <>
         <Route path="/login"element={<Login/>}/>
-        <Route path="/register" element={"#"}/>
+        <Route path="/register" element={<Register/>}/>
 
         <Route path="/" element={<Navigate to="/initialhome/herosection" replace/>}/>
         <Route path="/initialhome"element={<InitialHome/>}>
