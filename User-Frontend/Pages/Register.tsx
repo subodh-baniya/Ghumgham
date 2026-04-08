@@ -1,5 +1,6 @@
-import React, { ChangeEvent } from "react";
+import React from "react";
 import { useState } from "react";
+import axios from "axios"
 
 const Register = () => {
 
@@ -12,7 +13,7 @@ const Register = () => {
 
   })
 
-  const handlechange=(e:ChangeEvent<HTMLInputElement>)=>{
+  const handlechange=(e:React.ChangeEvent<HTMLInputElement>)=>{
 
     setform({
       ...form,
@@ -21,12 +22,34 @@ const Register = () => {
 
   }
 
+  const registerUser=(e:React.FormEvent<HTMLFormElement>)=>{
+   try {
+      e.preventDefault();
+      const {confirmPassword,...rest}=form;
+ 
+     if(confirmPassword==""||rest.username==""||rest.name==""||rest.email==""||rest.password==""){
+       console.log("all fields are required");
+     }
+ 
+     if(confirmPassword!=rest.password){
+       console.log("passwords should be same")
+     }
+ 
+      
+      const res=axios.post(`${import.meta.env.VITE_AUTH_API_BASE_URL}/register`,rest);
+      console.log(res);
+   } catch (error) {
+    console.log(error);
+   }
+
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
         <h2 className="text-2xl font-bold text-center mb-6">Create Account</h2>
 
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={registerUser}>
           <div>
             <label className="block text-sm font-medium mb-1">
               Username
@@ -46,10 +69,11 @@ const Register = () => {
               Name
             </label>
             <input
-            name="name"
+              name="name"
               type="text"
               value={form.name}
               placeholder="Enter full name"
+              onChange={handlechange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
             />
           </div>
@@ -63,6 +87,7 @@ const Register = () => {
               name="email"
               value={form.email}
               placeholder="Enter email"
+              onChange={handlechange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
             />
           </div>
@@ -76,19 +101,21 @@ const Register = () => {
               name="password"
               value={form.password}
               placeholder="Enter password"
+              onChange={handlechange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
             />
           </div>
 
-             <div>
+          <div>
             <label className="block text-sm font-medium mb-1">
               Confirm Password
             </label>
             <input
               type="password"
-              name="confirmpassword"
+              name="confirmPassword"
               value={form.confirmPassword}
               placeholder="Enter password"
+              onChange={handlechange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
             />
           </div>
