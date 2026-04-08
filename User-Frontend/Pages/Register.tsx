@@ -1,6 +1,26 @@
-import React from "react";
+import React, { ChangeEvent } from "react";
+import { useState } from "react";
 
 const Register = () => {
+
+  const [form,setform]=useState({
+    username:"",
+    name:"",
+    email:"",
+    password:"",
+    confirmPassword:""
+
+  })
+
+  const handlechange=(e:ChangeEvent<HTMLInputElement>)=>{
+
+    setform({
+      ...form,
+      [e.target.name]:e.target.value
+    })
+
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
@@ -13,7 +33,23 @@ const Register = () => {
             </label>
             <input
               type="text"
+              name="username"
+              value={form.username}
               placeholder="Enter username"
+              onChange={handlechange}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+            />
+          </div>
+
+            <div>
+            <label className="block text-sm font-medium mb-1">
+              Name
+            </label>
+            <input
+            name="name"
+              type="text"
+              value={form.name}
+              placeholder="Enter full name"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
             />
           </div>
@@ -24,6 +60,8 @@ const Register = () => {
             </label>
             <input
               type="email"
+              name="email"
+              value={form.email}
               placeholder="Enter email"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
             />
@@ -35,18 +73,22 @@ const Register = () => {
             </label>
             <input
               type="password"
+              name="password"
+              value={form.password}
               placeholder="Enter password"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
             />
           </div>
 
-          <div>
+             <div>
             <label className="block text-sm font-medium mb-1">
-              Full Name
+              Confirm Password
             </label>
             <input
-              type="text"
-              placeholder="Enter full name"
+              type="password"
+              name="confirmpassword"
+              value={form.confirmPassword}
+              placeholder="Enter password"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
             />
           </div>
