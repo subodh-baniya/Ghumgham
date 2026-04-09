@@ -41,7 +41,7 @@ const Herosection = () => {
         </p>
 
         <div className="flex space-x-4">
-          <button className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition cursor-pointer">
+          <button className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition cursor-pointer" onClick={()=>navigateto("/login")}>
             Login
           </button>
           <button className="px-6 py-3 bg-white text-blue-600 border border-blue-600 rounded-lg shadow hover:bg-blue-50 transition cursor-pointer" onClick={()=>{navigateto("/register")}}>
