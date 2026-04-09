@@ -1,51 +1,56 @@
-import React from "react";
-import { useState } from "react";
-import axios from "axios"
-
+import React, { useState } from "react";
+import axios from "axios";
 
 const Register = () => {
+  const [form, setForm] = useState({
+    username: "",
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  const [form,setform]=useState({
-    username:"",
-    name:"",
-    email:"",
-    password:"",
-    confirmPassword:""
-
-  })
-
-  const handlechange=(e:React.ChangeEvent<HTMLInputElement>)=>{
-
-    setform({
+  const handlechange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({
       ...form,
-      [e.target.name]:e.target.value
-    })
+      [e.target.name]: e.target.value,
+    });
+  };
 
-  }
-
-  const registerUser=async(e:React.FormEvent<HTMLFormElement>)=>{
-   try {
+  const registerUser = async (e: React.FormEvent<HTMLFormElement>) => {
+    try {
       e.preventDefault();
-      const {confirmPassword,...rest}=form;
- 
-     if(confirmPassword==""||rest.username==""||rest.name==""||rest.email==""||rest.password==""){
-       console.log("all fields are required");
-       return;
-     }
- 
-     if(confirmPassword!=rest.password){
-       console.log("passwords should be same");
-       return;
-     }
- 
-      
-      const res=await axios.post(`${import.meta.env.VITE_AUTH_API_BASE_URL}/register`,rest);
-      console.log(res.data);
-   } catch (error) {
-    console.log(error);
-   }
+      const { confirmPassword, ...rest } = form;
 
-  }
+      if (
+        confirmPassword == "" ||
+        rest.username == "" ||
+        rest.name == "" ||
+        rest.email == "" ||
+        rest.password == ""
+      ) {
+        console.log("all fields are required");
+        return;
+      }
+
+      if (confirmPassword != rest.password) {
+        console.log("passwords should be same");
+        return;
+      }
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_AUTH_API_BASE_URL}/register`,
+        rest
+      );
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_AUTH_API_BASE_URL}/auth/google`;
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -54,9 +59,7 @@ const Register = () => {
 
         <form className="space-y-4" onSubmit={registerUser}>
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Username
-            </label>
+            <label className="block text-sm font-medium mb-1">Username</label>
             <input
               type="text"
               name="username"
@@ -67,10 +70,8 @@ const Register = () => {
             />
           </div>
 
-            <div>
-            <label className="block text-sm font-medium mb-1">
-              Name
-            </label>
+          <div>
+            <label className="block text-sm font-medium mb-1">Name</label>
             <input
               name="name"
               type="text"
@@ -82,9 +83,7 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Email
-            </label>
+            <label className="block text-sm font-medium mb-1">Email</label>
             <input
               type="email"
               name="email"
@@ -96,9 +95,7 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Password
-            </label>
+            <label className="block text-sm font-medium mb-1">Password</label>
             <input
               type="password"
               name="password"
@@ -110,9 +107,7 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Confirm Password
-            </label>
+            <label className="block text-sm font-medium mb-1">Confirm Password</label>
             <input
               type="password"
               name="confirmPassword"
@@ -130,6 +125,21 @@ const Register = () => {
             Register
           </button>
         </form>
+
+        <div className="mt-4 text-center">
+          <p className="text-sm mb-2">Continue with</p>
+          <button
+            onClick={handleGoogleLogin}
+            className="w-full py-2 border rounded-lg hover:bg-gray-100 transition flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="google"
+              className="w-5 h-5"
+            />
+            Google
+          </button>
+        </div>
       </div>
     </div>
   );
