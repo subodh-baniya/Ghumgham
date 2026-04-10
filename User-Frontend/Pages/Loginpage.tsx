@@ -3,7 +3,7 @@ import axios from "axios";
 
 const Loginpage = () => {
   const [form, setForm] = useState({
-    username: "",
+    Username: "",
     password: "",
   });
 
@@ -18,7 +18,7 @@ const Loginpage = () => {
     try {
       e.preventDefault();
 
-      if (form.username === "" || form.password === "") {
+      if (form.Username === "" || form.password === "") {
         console.log("all fields are required");
         return;
       }
@@ -51,7 +51,7 @@ const Loginpage = () => {
             <input
               type="text"
               name="username"
-              value={form.username}
+              value={form.Username}
               placeholder="Enter username"
               onChange={handlechange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
@@ -82,7 +82,7 @@ const Loginpage = () => {
           <p className="text-sm mb-2">Continue with</p>
           <button
             onClick={handleGoogleLogin}
-            className="w-full py-2 border rounded-lg hover:bg-gray-100 transition flex items-center justify-center gap-2"
+            className="w-full py-2 border rounded-lg hover:bg-gray-100 transition flex items-center justify-center gap-2 cursor-pointer"
           >
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
