@@ -7,6 +7,8 @@ const Loginpage = () => {
     password: "",
   });
 
+  const [error,setError]=useState("")
+
   const handlechange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({
       ...form,
@@ -19,7 +21,7 @@ const Loginpage = () => {
       e.preventDefault();
 
       if (form.Username === "" || form.password === "") {
-        console.log("all fields are required");
+        setError("all fields are required");
         return;
       }
 
@@ -32,7 +34,8 @@ const Loginpage = () => {
       console.log(res.data);
       window.location.href = "/dashboard";
     } catch (error) {
-      console.log(error);
+      const errorMessage = error instanceof Error ? error.message : "An error occurred";
+      setError(errorMessage);
     }
   };
 
@@ -45,12 +48,17 @@ const Loginpage = () => {
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
         <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
 
+        {error && (
+          <p className="text-red-500 text-sm mt-2 text-center">
+            {error}
+          </p>
+        )}
         <form className="space-y-4" onSubmit={loginUser}>
           <div>
             <label className="block text-sm font-medium mb-1">Username</label>
             <input
               type="text"
-              name="username"
+              name="Username"
               value={form.Username}
               placeholder="Enter username"
               onChange={handlechange}
