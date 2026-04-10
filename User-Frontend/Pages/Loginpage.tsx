@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const Loginpage = () => {
   const [form, setForm] = useState({
@@ -25,17 +25,16 @@ const Loginpage = () => {
         return;
       }
 
-      const res = await axios.post(
+      await axios.post(
         `${import.meta.env.VITE_AUTH_API_BASE_URL}/login`,
         form,
         { withCredentials: true }
       );
 
-      console.log(res.data);
       window.location.href = "/dashboard";
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "An error occurred";
-      setError(errorMessage);
+    } catch (error:unknown) {
+      const err = error as AxiosError<{ message: string }>;
+      setError(err.response?.data?.message || "Login failed");
     }
   };
 
