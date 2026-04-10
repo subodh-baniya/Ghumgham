@@ -7,11 +7,11 @@ const Register = () => {
   const navigateto=useNavigate();
   const [error,setError]=useState("");
   const [form, setForm] = useState({
-    username: "",
-    name: "",
+    Username: "",
+    Name: "",
     email: "",
     password: "",
-    confirmPassword: "",
+    confirmPassword: ""
   });
 
   const handlechange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,8 +28,8 @@ const Register = () => {
 
       if (
         confirmPassword == "" ||
-        rest.username == "" ||
-        rest.name == "" ||
+        rest.Username == "" ||
+        rest.Name == "" ||
         rest.email == "" ||
         rest.password == ""
       ) {
@@ -75,8 +75,8 @@ const Register = () => {
             <label className="block text-sm font-medium mb-1">Username</label>
             <input
               type="text"
-              name="username"
-              value={form.username}
+              name="Username"
+              value={form.Username}
               placeholder="Enter username"
               onChange={handlechange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
@@ -86,9 +86,9 @@ const Register = () => {
           <div>
             <label className="block text-sm font-medium mb-1">Name</label>
             <input
-              name="name"
+              name="Name"
               type="text"
-              value={form.name}
+              value={form.Name}
               placeholder="Enter full name"
               onChange={handlechange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
