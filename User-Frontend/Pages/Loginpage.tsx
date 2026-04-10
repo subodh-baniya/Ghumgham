@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
+import {useNavigate} from "react-router-dom"
 
 const Loginpage = () => {
+  const navigateto=useNavigate();
   const [form, setForm] = useState({
     Username: "",
     password: "",
@@ -31,7 +33,7 @@ const Loginpage = () => {
         { withCredentials: true }
       );
 
-      window.location.href = "/dashboard";
+      navigateto("/dashboard");
     } catch (error:unknown) {
       const err = error as AxiosError<{ message: string }>;
       setError(err.response?.data?.message || "Login failed");

@@ -1,7 +1,11 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+
+  const navigateto=useNavigate();
+  const [error,setError]=useState("");
   const [form, setForm] = useState({
     username: "",
     name: "",
@@ -29,22 +33,25 @@ const Register = () => {
         rest.email == "" ||
         rest.password == ""
       ) {
-        console.log("all fields are required");
+        setError("all fields are required");
         return;
       }
 
       if (confirmPassword != rest.password) {
-        console.log("passwords should be same");
+        setError("passwords should be same");
         return;
       }
 
-      const res = await axios.post(
+      await axios.post(
         `${import.meta.env.VITE_AUTH_API_BASE_URL}/register`,
         rest
       );
-      console.log(res.data);
-    } catch (error) {
-      console.log(error);
+
+      navigateto("/login")
+
+    } catch (error:unknown) {
+      const err=error as AxiosError<{message:string}>
+      setError(err.response?.data?.message||"registration failed");
     }
   };
 
@@ -56,6 +63,12 @@ const Register = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
         <h2 className="text-2xl font-bold text-center mb-6">Create Account</h2>
+
+             {error && (
+          <p className="text-red-500 text-sm mt-2 text-center">
+            {error}
+          </p>
+        )}
 
         <form className="space-y-4" onSubmit={registerUser}>
           <div>
