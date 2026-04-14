@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import {motion} from "framer-motion"
 
 const Register = () => {
 
@@ -61,17 +62,32 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
-        <h2 className="text-2xl font-bold text-center mb-6">Create Account</h2>
+      <motion.div 
+      initial={{opacity:0,y:40}}
+      animate={{opacity:1,y:0}}
+      transition={{duration:0.4}}
+      className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
+        <motion.h2 
+        initial={{opacity:0,x:-40}}
+        animate={{opacity:1,x:0}}
+        transition={{delay:0.1}}
+        className="text-2xl font-bold text-center mb-6">Create Account</motion.h2>
 
              {error && (
-          <p className="text-red-500 text-sm mt-2 text-center">
+          <motion.p
+          initial={{opacity:0}}
+          animate={{opacity:1}}
+          className="text-red-500 text-sm mt-2 text-center">
             {error}
-          </p>
+          </motion.p>
         )}
 
         <form className="space-y-4" onSubmit={registerUser}>
-          <div>
+          <motion.div
+          initial={{opacity:0,x:40}}
+          animate={{opacity:1,x:0}}
+          transition={{delay:0.1}}
+          >
             <label className="block text-sm font-medium mb-1">Username</label>
             <input
               type="text"
@@ -81,9 +97,12 @@ const Register = () => {
               onChange={handlechange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
             />
-          </div>
+          </motion.div>
 
-          <div>
+          <motion.div
+          initial={{opacity:0,x:-40}}
+          animate={{opacity:1,x:0}}
+          transition={{delay:0.1}}>
             <label className="block text-sm font-medium mb-1">Name</label>
             <input
               name="Name"
@@ -93,9 +112,12 @@ const Register = () => {
               onChange={handlechange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
             />
-          </div>
+          </motion.div>
 
-          <div>
+          <motion.div
+          initial={{opacity:0,x:40}}
+          animate={{opacity:1,x:0}}
+          transition={{delay:0.1}}>
             <label className="block text-sm font-medium mb-1">Email</label>
             <input
               type="email"
@@ -105,9 +127,12 @@ const Register = () => {
               onChange={handlechange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
             />
-          </div>
+          </motion.div>
 
-          <div>
+          <motion.div
+          initial={{opacity:0,x:-40}}
+          animate={{opacity:1,x:0}}
+          transition={{delay:0.1}}>
             <label className="block text-sm font-medium mb-1">Password</label>
             <input
               type="password"
@@ -117,9 +142,12 @@ const Register = () => {
               onChange={handlechange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
             />
-          </div>
+          </motion.div>
 
-          <div>
+          <motion.div
+          initial={{opacity:0,x:40}}
+          animate={{opacity:1,x:0}}
+          transition={{delay:0.1}}>
             <label className="block text-sm font-medium mb-1">Confirm Password</label>
             <input
               type="password"
@@ -129,19 +157,29 @@ const Register = () => {
               onChange={handlechange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
             />
-          </div>
+          </motion.div>
 
-          <button
+          <motion.button
+           whileHover={{scale:1.02}}
+          whileTap={{scale:0.95}}
+          transition={{type:"spring",stiffness:300}}
             type="submit"
             className="w-full py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition cursor-pointer"
           >
             Register
-          </button>
+          </motion.button>
         </form>
 
-        <div className="mt-4 text-center">
+        <motion.div 
+        initial={{opacity:0,x:-40}}
+          animate={{opacity:1,x:0}}
+          transition={{delay:0.1}}
+          className="mt-4 text-center">
           <p className="text-sm mb-2">Continue with</p>
-          <button
+          <motion.button
+          whileHover={{scale:1.02}}
+          whileTap={{scale:0.95}}
+          transition={{type:"spring",stiffness:300}}
             onClick={handleGoogleLogin}
             className="w-full py-2 border rounded-lg hover:bg-gray-100 transition flex items-center justify-center gap-2 cursor-pointer"
           >
@@ -151,9 +189,9 @@ const Register = () => {
               className="w-5 h-5"
             />
             Google
-          </button>
-        </div>
-      </div>
+          </motion.button>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };
