@@ -1,9 +1,18 @@
 import React, { useState } from "react";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import {useNavigate} from "react-router-dom"
+
+import {useAuth } from "../Contexts/Authcontext";
 
 const Loginpage = () => {
   const navigateto=useNavigate();
+
+  const auth = useAuth();
+  if (!auth) {
+    throw new Error("useAuth must be used within AuthProvider");
+  }
+  const { login } = auth;
+
   const [form, setForm] = useState({
     Username: "",
     password: "",
@@ -27,11 +36,8 @@ const Loginpage = () => {
         return;
       }
 
-      await axios.post(
-        `${import.meta.env.VITE_AUTH_API_BASE_URL}/login`,
-        form,
-        { withCredentials: true }
-      );
+
+       await login(form);
 
       navigateto("/dashboard");
     } catch (error:unknown) {
