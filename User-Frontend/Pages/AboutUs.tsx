@@ -186,7 +186,11 @@ const AboutUs = () => {
 
       {/* CTA */}
       <section className="py-20 bg-blue-600 text-white text-center">
-        <div className="max-w-3xl mx-auto px-6">
+        <motion.div className="max-w-3xl mx-auto px-6"
+         initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}>
           <h2 className="text-4xl font-bold mb-6">
             Grow Your Hotel Business
           </h2>
@@ -203,7 +207,7 @@ const AboutUs = () => {
           >
             Register Your Hotel
           </motion.button>
-        </div>
+        </motion.div>
       </section>
     </motion.div>
   );
