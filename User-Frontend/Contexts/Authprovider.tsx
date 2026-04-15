@@ -21,6 +21,7 @@ export const Authprovider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = async () => {
+    await axios.post( `${import.meta.env.VITE_AUTH_API_BASE_URL}/logout`)
     setUser(undefined);
     setIsAuthenticated(false);
   };
