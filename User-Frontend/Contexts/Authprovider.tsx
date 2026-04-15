@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
 import { Authcontext } from './Authcontext'
 import axios from "axios";
-
-
+import type { user } from './Authcontext';
 
 export const Authprovider = ({ children }: { children: React.ReactNode }) => {
 
-  const [user,setUser]=useState();
+  const [user,setUser]=useState<user | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const login = async (form: { Username: string; password: string }) => {
@@ -22,7 +21,7 @@ export const Authprovider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     await axios.post( `${import.meta.env.VITE_AUTH_API_BASE_URL}/logout`)
-    setUser(undefined);
+    setUser(null);
     setIsAuthenticated(false);
   };
 
