@@ -7,6 +7,7 @@ import Herosection from "../Components/Herosection"
 import Register from "../Pages/Register"
 import Loginpage from "../Pages/Loginpage"
 import Dashboard from "../Pages/Dashboard"
+import ProtectedRoute from "./ProtectedRoute"
 
 const router=createBrowserRouter(
     createRoutesFromElements(
@@ -21,8 +22,10 @@ const router=createBrowserRouter(
         <Route path="services" element={<Services/>}/>
         <Route path="contactus" element={<ContactUs/>}/>
         </Route>
-        <Route path="/dashboard"element={<Dashboard/>}/>
 
+        <Route element={<ProtectedRoute/>}>
+        <Route path="/dashboard"element={<Dashboard/>}/>
+        </Route>
         </>
     )
 )
