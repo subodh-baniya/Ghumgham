@@ -12,16 +12,100 @@ import {
   RealixSectionLabel,
 } from '@/src/components/realix/screen-shell';
 import { RealixColors } from '@/src/constants/screens/realix';
+import axios from 'axios';
+import { API_ENDPOINTS_AUTH } from '@/src/constants/api';
+import * as SecureStore from 'expo-secure-store';
+import { useEffect } from 'react';
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const [locationEnabled, setLocationEnabled] = useState(false);
+  const API_PROFILE = API_ENDPOINTS_AUTH.PROFILE;
+  const API_PROFILE_IMAGE = API_ENDPOINTS_AUTH.USER_PROFILE;
+  
+  const [profileData, setProfileData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        setLoading(true);
+        const token = await SecureStore.getItemAsync("userToken");
+        if (!token) return;
+
+        const response = await axios.get(API_PROFILE, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          withCredentials: true,
+          timeout: 10000,
+        });
+
+        if (response.data.success && response.data.data) {
+          setProfileData(response.data.data);
+        }
+      } catch (err: any) {
+        console.error("Failed to load profile details", err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfileData();
+  }, []);
+
+   useEffect(() => {
+    const fetchProfileImage = async () => {
+      try {
+        setProfileLoading(true);
+        
+        const token = await SecureStore.getItemAsync("userToken");
+        
+        if (!token) {
+          setProfileLoading(false);
+          return;
+        }
+
+        const response = await axios.get(API_PROFILE_IMAGE, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          withCredentials: true,
+          timeout: 10000,
+        });
+        
+        if (response.data.success && response.data.data?.profilePicture) {
+          setProfileImage(response.data.data.profilePicture);
+        }
+      } catch (err: any) {
+        // Silent error - avatar shows empty if profile fetch fails
+      } finally {
+        setProfileLoading(false);
+      }
+    };
+
+    fetchProfileImage();
+  }, []);
 
   const handleLogout = async () => {
     await logout();
     router.replace('/(auth)/signin' as never);
   };
+
+  const displayName = profileData?.Name || user?.name || "Kc Prabin";
+  const displayEmail = profileData?.email || user?.email || "prabin@example.com";
+  
+  const initials = displayName
+    ?.split(" ")
+    .map((n: string) => n[0])
+    .join("")
+    .toUpperCase().substring(0, 2) || "U";
 
   return (
     <RealixScreen contentContainerStyle={styles.content}>
@@ -30,10 +114,14 @@ export default function ProfileScreen() {
 
       <RealixCard style={styles.profileCard}>
         <View style={styles.profileTop}>
-          <View style={styles.profileAvatar}><Text style={styles.profileAvatarText}>KP</Text></View>
+          <View style={styles.profileAvatar}>
+            <Text style={styles.profileAvatarText}>{initials}</Text>
+          </View>
           <View style={styles.profileTextWrap}>
-            <Text style={styles.profileName}>Kc Prabin</Text>
-            <Text style={styles.profileEmail}>prabin@example.com</Text>
+            <Text style={styles.profileName}>
+              {loading ? "Loading..." : displayName}
+            </Text>
+            <Text style={styles.profileEmail}>{displayEmail}</Text>
           </View>
         </View>
       </RealixCard>
