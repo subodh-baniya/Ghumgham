@@ -1,16 +1,19 @@
 import {createBrowserRouter, createRoutesFromElements, Route, Navigate} from "react-router-dom"
-import Login from "../Pages/Loginpage"
 import InitialHome from "../Pages/InitialHome"
 import AboutUs from "../Pages/AboutUs"
 import Services from "../Pages/Services"
 import ContactUs from "../Pages/ContactUs"
 import Herosection from "../Components/Herosection"
+import Register from "../Pages/Register"
+import Loginpage from "../Pages/Loginpage"
+import Dashboard from "../Pages/Dashboard"
+import ProtectedRoute from "./ProtectedRoute"
 
 const router=createBrowserRouter(
     createRoutesFromElements(
         <>
-        <Route path="/login"element={<Login/>}/>
-        <Route path="/register" element={"#"}/>
+        <Route path="/login"element={<Loginpage/>}/>
+        <Route path="/register" element={<Register/>}/>
 
         <Route path="/" element={<Navigate to="/initialhome/herosection" replace/>}/>
         <Route path="/initialhome"element={<InitialHome/>}>
@@ -20,6 +23,9 @@ const router=createBrowserRouter(
         <Route path="contactus" element={<ContactUs/>}/>
         </Route>
 
+        <Route element={<ProtectedRoute/>}>
+        <Route path="/dashboard"element={<Dashboard/>}/>
+        </Route>
         </>
     )
 )
