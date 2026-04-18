@@ -1,8 +1,10 @@
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Contexts/Authcontext"
 
 
 const Dashboard = () => {
 
+  const navigateto=useNavigate()
   const auth=useAuth();
   if(!auth){
     return null;
@@ -11,6 +13,7 @@ const Dashboard = () => {
 
   const loggingout=()=>{
 logout();
+navigateto('/login',{replace:true});
   }
 
   return (
