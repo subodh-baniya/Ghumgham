@@ -29,6 +29,7 @@ const router=createBrowserRouter(
         <Route element={<ProtectedRoute/>}>
         <Route path="/dashboard"element={<Dashboard/>}/>
         </Route>
+        
         </>
     )
 )

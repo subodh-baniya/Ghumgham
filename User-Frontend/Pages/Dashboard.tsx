@@ -7,11 +7,19 @@ const Dashboard = () => {
   if(!auth){
     return null;
   }
-  const {user}=auth;
+  const {user,logout}=auth;
+
+  const loggingout=()=>{
+logout();
+  }
+
   return (
     <div>
       <p>{user?.Username}</p>
+      <button onClick={()=>{loggingout()}}>logout</button>
     </div>
+
+    
   )
 }
 
