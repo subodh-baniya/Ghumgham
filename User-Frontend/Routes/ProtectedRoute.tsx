@@ -10,7 +10,11 @@ const ProtectedRoute = () => {
     return null;
   }
 
-  const {isAuthenticated}=auth;
+  const {isAuthenticated,loading}=auth;
+
+  if(loading){
+    return null;
+  }
 
  return isAuthenticated
     ? <Outlet />
