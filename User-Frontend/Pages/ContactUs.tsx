@@ -53,7 +53,7 @@ const Contact = () => {
         ].map((item, index) => (
           <motion.div
             key={index}
-            className="bg-white p-8 rounded-xl shadow-md text-center"
+            className="bg-white p-8 rounded-xl shadow-md text-center transition transform hover:-translate-y-2"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{

@@ -8,10 +8,12 @@ import Register from "../Pages/Register"
 import Loginpage from "../Pages/Loginpage"
 import Dashboard from "../Pages/Dashboard"
 import ProtectedRoute from "./ProtectedRoute"
+import Publicroute from "./Publicroute"
 
 const router=createBrowserRouter(
     createRoutesFromElements(
         <>
+        <Route element={<Publicroute/>}>
         <Route path="/login"element={<Loginpage/>}/>
         <Route path="/register" element={<Register/>}/>
 
@@ -22,10 +24,12 @@ const router=createBrowserRouter(
         <Route path="services" element={<Services/>}/>
         <Route path="contactus" element={<ContactUs/>}/>
         </Route>
+        </Route>
 
         <Route element={<ProtectedRoute/>}>
         <Route path="/dashboard"element={<Dashboard/>}/>
         </Route>
+        
         </>
     )
 )
