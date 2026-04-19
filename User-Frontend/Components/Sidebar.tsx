@@ -16,7 +16,6 @@ const Sidebar = () => {
   return (
     <aside className="w-64 h-screen bg-white flex flex-col shadow-sm">
 
-      {/* Logo (bigger + smoother) */}
       <div className="h-20 flex items-center px-6">
         <div className="text-2xl font-bold tracking-wide">
           <span className="bg-linear-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
@@ -36,7 +35,7 @@ const Sidebar = () => {
           >
             {({ isActive }) => (
               <>
-                {/* Active background (soft, no harsh edges) */}
+                {/* Active background*/}
                 {isActive && (
                   <motion.div
                     layoutId="active-bg"
@@ -45,7 +44,7 @@ const Sidebar = () => {
                   />
                 )}
 
-                {/* Left indicator (subtle) */}
+                {/* Left indicator*/}
                 {isActive && (
                   <motion.div
                     layoutId="active-bar"
