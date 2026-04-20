@@ -322,7 +322,7 @@ export default function HomeScreen() {
           </View>
           <Pressable
             style={styles.promoButton}
-            onPress={() => router.push("/(tabs)/explore")}
+            onPress={() => router.push("/(tabs)/explore/exploree")}
           >
             <Text style={styles.promoButtonText}>Explore now</Text>
           </Pressable>

@@ -24,9 +24,14 @@ export default function ExploreScreen() {
             <Text style={styles.title}>Discover</Text>
             <Text style={styles.subtitle}>Find your next stay and jump into booking in one flow.</Text>
           </View>
-          <Pressable style={styles.searchButton} onPress={() => router.push('/(tabs)/explore/search')}>
-            <Ionicons name="options-outline" size={18} color={RealixColors.textPrimary} />
-          </Pressable>
+          <View style={styles.headerActions}>
+            <Pressable style={styles.searchButton} onPress={() => router.push('/(tabs)/explore/search')}>
+              <Ionicons name="options-outline" size={18} color={RealixColors.textPrimary} />
+            </Pressable>
+            <Pressable style={styles.backButton} onPress={() => router.replace('/(tabs)')}>
+              <Ionicons name="arrow-back" size={18} color={RealixColors.textPrimary} />
+            </Pressable>
+          </View>
         </View>
 
         <Pressable style={styles.searchBar} onPress={() => router.push('/(tabs)/explore/search')}>
