@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { AxiosError } from "axios";
-import {useNavigate} from "react-router-dom"
-import {motion} from "framer-motion"
+import { useNavigate } from "react-router-dom"
+import { motion } from "framer-motion"
 
-import {useAuth } from "../Contexts/Authcontext";
+import { useAuth } from "../Contexts/Authcontext";
 
 const Loginpage = () => {
-  const navigateto=useNavigate();
+  const navigateto = useNavigate();
 
   const auth = useAuth();
   if (!auth) {
@@ -19,7 +19,7 @@ const Loginpage = () => {
     password: "",
   });
 
-  const [error,setError]=useState("")
+  const [error, setError] = useState("")
 
   const handlechange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({
@@ -38,10 +38,10 @@ const Loginpage = () => {
       }
 
 
-       await login(form);
+      await login(form);
 
       navigateto("/dashboard");
-    } catch (error:unknown) {
+    } catch (error: unknown) {
       const err = error as AxiosError<{ message: string }>;
       setError(err.response?.data?.message || "Login failed");
     }
@@ -145,6 +145,24 @@ const Loginpage = () => {
             Google
           </motion.button>
         </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.35 }}
+          className="mt-6 text-center text-sm text-gray-600"
+        >
+          Don't have an account?{" "}
+          <motion.span
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigateto("/register")}
+            className="font-semibold text-black cursor-pointer underline underline-offset-4"
+          >
+            Register
+          </motion.span>
+        </motion.p>
+
       </motion.div>
     </div>
   );
