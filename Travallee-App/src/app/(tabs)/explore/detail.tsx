@@ -33,19 +33,24 @@ interface HotelDetail {
   updatedAt: string;
 }
 
-const AMENITY_ICONS: Record<string, string> = {
-  'Swimming': '🏊',
-  'Wifi': '📶',
-  'Restaurant': '🍴',
-  'Bar': '🍹',
-  'Business': '💼',
-  'Parking': '🚗',
-  'Gym': '💪',
-  'Pool': '🏊',
-  'Free Wifi': '📶',
-  'AC': '❄️',
-  'TV': '📺',
-  'Kitchen': '👨‍🍳',
+const getAmenityIcon = (facility: string): string => {
+  const lowerFacility = facility.toLowerCase();
+  const iconMap: Record<string, string> = {
+    'swimming': '☀',
+    'wifi': '⬢',
+    'free wifi': '⬢',
+    'restaurant': '🍴',
+    'bar': '🍸',
+    'business': '💼',
+    'parking': '⊟',
+    'gym': '⊗',
+    'pool': '☀',
+    'ac': '⊙',
+    'tv': '▭',
+    'kitchen': '⌂',
+    'air conditioning': '⊙',
+  };
+  return iconMap[lowerFacility] || '·';
 };
 
 export default function HotelDetailScreen() {
@@ -55,12 +60,17 @@ export default function HotelDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const panResponder = useRef(
     PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponder: () => false,
+      onMoveShouldSetPanResponder: (evt, gestureState) => {
+        // Only activate swipe when sufficient horizontal movement
+        return Math.abs(gestureState.dx) > 30 && Math.abs(gestureState.dy) < 10;
+      },
       onPanResponderRelease: (evt, gestureState) => {
+        // Swipe left only
         if (gestureState.dx < -50) {
           router.back();
         }
@@ -120,8 +130,8 @@ export default function HotelDetailScreen() {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <StatusBar style="light" />
-        <View style={styles.header}>
-          <Pressable style={styles.headerIcon} onPress={() => router.back()}>
+        <View style={styles.headerBar}>
+          <Pressable style={styles.headerBtn} onPress={() => router.back()}>
             <Ionicons name="chevron-back" size={18} color={RealixColors.textPrimary} />
           </Pressable>
         </View>
@@ -141,195 +151,164 @@ export default function HotelDetailScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="light" />
-      <View style={styles.swipeContainer} {...panResponder.panHandlers}>
-        <View style={styles.header}>
-          <Pressable style={styles.headerIcon} onPress={() => router.back()}>
-            <Ionicons name="chevron-back" size={18} color={RealixColors.textPrimary} />
+      <View style={styles.headerBar}>
+        <Pressable style={styles.headerBtn} onPress={() => router.back()}>
+          <Ionicons name="chevron-back" size={18} color={RealixColors.textPrimary} />
+        </Pressable>
+        <View style={styles.headerRight}>
+          <Pressable style={styles.headerBtn}>
+            <Ionicons name="heart-outline" size={16} color={RealixColors.textSecondary} />
           </Pressable>
-          <View style={styles.headerRight}>
-            <Pressable style={styles.headerIcon}>
-              <Ionicons name="heart-outline" size={16} color={RealixColors.textSecondary} />
-            </Pressable>
-            <Pressable style={styles.headerIcon}>
-              <Ionicons name="ellipsis-horizontal" size={16} color={RealixColors.textSecondary} />
-            </Pressable>
-          </View>
+          <Pressable style={styles.headerBtn}>
+            <Ionicons name="ellipsis-horizontal" size={16} color={RealixColors.textSecondary} />
+          </Pressable>
+        </View>
+      </View>
+
+      <ScrollView 
+        ref={scrollViewRef}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        {...panResponder.panHandlers}
+      >
+        {/* Hero Image */}
+        <View style={styles.heroSection}>
+          {hotel.hotelImages && hotel.hotelImages.length > 0 ? (
+            <Image
+              source={{ uri: hotel.hotelImages[currentImageIndex] }}
+              style={styles.heroImage}
+            />
+          ) : (
+            <View style={styles.noImage}>
+              <Ionicons name="image-outline" size={40} color={RealixColors.textMuted} />
+            </View>
+          )}
+          
+          <Pressable style={styles.favoriteBtn}>
+            <Ionicons name="heart-outline" size={14} color="#fff" />
+          </Pressable>
+
+          {hotel.hotelImages && hotel.hotelImages.length > 1 && (
+            <View style={styles.dots}>
+              {hotel.hotelImages.map((_, idx) => (
+                <View
+                  key={idx}
+                  style={[
+                    styles.dot,
+                    idx === currentImageIndex && styles.dotActive,
+                  ]}
+                />
+              ))}
+            </View>
+          )}
         </View>
 
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          {/* Hero Image with Carousel */}
-          <View style={styles.imageCarousel}>
-            {hotel.hotelImages && hotel.hotelImages.length > 0 ? (
-              <>
-                <Image
-                  source={{ uri: hotel.hotelImages[currentImageIndex] }}
-                  style={styles.heroImage}
-                />
-                {hotel.hotelImages.length > 1 && (
-                  <View style={styles.imageIndicators}>
-                    {hotel.hotelImages.map((_, index) => (
-                      <View
-                        key={index}
-                        style={[
-                          styles.indicator,
-                          index === currentImageIndex && styles.indicatorActive,
-                        ]}
-                      />
-                    ))}
-                  </View>
-                )}
-              </>
-            ) : (
-              <View style={styles.noImageContainer}>
-                <Ionicons name="image-outline" size={40} color={RealixColors.textMuted} />
-              </View>
-            )}
-            <Pressable style={styles.favoriteButton}>
-              <Ionicons name="heart-outline" size={16} color="white" />
-            </Pressable>
-          </View>
-
-          {/* Property Info */}
-          <View style={styles.section}>
-            <Text style={styles.propertyName}>{hotel.hotelName}</Text>
-            
-            <View style={styles.locationRow}>
-              <Ionicons name="location" size={12} color={RealixColors.textMuted} />
-              <Text style={styles.locationText}>{hotel.hotelLocation}</Text>
-            </View>
+        {/* Body Content */}
+        <View style={styles.bodyContent}>
+          
+          {/* Name & Location */}
+          <Text style={styles.propName}>{hotel.hotelName}</Text>
+          <View style={styles.locRow}>
+            <View style={styles.pin} />
+            <Text style={styles.locText}>{hotel.hotelLocation}</Text>
           </View>
 
           {/* About */}
-          <View style={styles.section}>
-            <Text style={styles.sectionHeader}>About</Text>
-            <Text style={styles.description}>{hotel.hotelDescription}</Text>
-          </View>
+          <Text style={styles.secTitle}>About</Text>
+          <Text style={styles.aboutText}>{hotel.hotelDescription}</Text>
 
-          {/* Popular Amenities */}
-          <View style={styles.section}>
-            <Text style={styles.sectionHeader}>Popular Amenities</Text>
-            <View style={styles.amenitiesGrid}>
-              {displayAmenities.map((facility, index) => (
-                <View key={index} style={styles.amenityItem}>
-                  <Text style={styles.amenityIcon}>
-                    {AMENITY_ICONS[facility] || '✓'}
-                  </Text>
-                  <Text style={styles.amenityLabel}>{facility}</Text>
+          {/* Amenities */}
+          <Text style={styles.secTitle}>Popular Amenities</Text>
+          <View style={styles.amenRow}>
+            {displayAmenities.map((facility, idx) => (
+              <View key={idx} style={styles.amenity}>
+                <View style={styles.amenIcon}>
+                  <Text style={styles.amenIconText}>{getAmenityIcon(facility)}</Text>
                 </View>
-              ))}
-            </View>
-            <Text style={styles.allAmenitiesLink}>All Amenities →</Text>
+                <Text style={styles.amenLabel}>{facility}</Text>
+              </View>
+            ))}
           </View>
+          <Text style={styles.allLink}>All Amenities →</Text>
 
           {/* Gallery */}
-          <View style={styles.section}>
-            <Text style={styles.sectionHeader}>Gallery</Text>
-            <View style={styles.galleryContainer}>
-              {hotel.hotelImages?.slice(0, 3).map((image, index) => (
-                <View key={index} style={styles.galleryItem}>
-                  <Image source={{ uri: image }} style={styles.galleryImage} />
-                  {index === 2 && hotel.hotelImages.length > 3 && (
-                    <View style={styles.galleryOverlay}>
-                      <Text style={styles.galleryOverlayText}>+{hotel.hotelImages.length - 3}</Text>
-                    </View>
-                  )}
-                </View>
-              ))}
-            </View>
+          <Text style={styles.secTitle}>Gallery</Text>
+          <View style={styles.galleryRow}>
+            {hotel.hotelImages?.slice(0, 3).map((img, idx) => (
+              <View key={idx} style={styles.thumb}>
+                <Image source={{ uri: img }} style={styles.thumbImg} />
+                {idx === 2 && hotel.hotelImages.length > 3 && (
+                  <View style={styles.thumbOverlay}>
+                    <Text style={styles.overlayText}>+{hotel.hotelImages.length - 3}</Text>
+                  </View>
+                )}
+              </View>
+            ))}
           </View>
 
-          {/* Location */}
-          <View style={styles.section}>
-            <Text style={styles.sectionHeader}>Location</Text>
-            <View style={styles.mapPlaceholder}>
-              <Ionicons name="location" size={24} color={RealixColors.textMuted} />
-            </View>
+          {/* Map */}
+          <Text style={styles.secTitle}>Location</Text>
+          <View style={styles.mapBox}>
+            <View style={styles.mapPin} />
           </View>
 
           {/* Reviews */}
-          <View style={styles.section}>
-            <View style={styles.reviewsHeader}>
-              <Text style={styles.sectionHeader}>Reviews</Text>
-              <Text style={styles.viewAllLink}>View all reviews</Text>
-            </View>
-
-            <View style={styles.ratingDisplay}>
-              <Text style={styles.ratingNumber}>{hotel.rating.toFixed(1)}</Text>
-              <Text style={styles.stars}>★★★★★</Text>
-              <Text style={styles.ratingCount}>({hotel.numberOfReviews})</Text>
-            </View>
-
-            {/* Rating Bars */}
-            <View style={styles.ratingBars}>
-              {[5, 4, 3, 2, 1].map((star, index) => (
-                <View key={star} style={styles.ratingBarRow}>
-                  <Text style={styles.ratingBarStar}>{star}★</Text>
-                  <View style={styles.ratingBarTrack}>
-                    <View 
-                      style={[
-                        styles.ratingBarFill,
-                        { 
-                          width: `${ratingPercentages[index]}%`,
-                          backgroundColor: [
-                            '#FFB800',
-                            '#FFC940', 
-                            '#E8E0C8',
-                            '#D8D0B8',
-                            '#C8C0A8'
-                          ][index]
-                        }
-                      ]} 
-                    />
-                  </View>
-                  <Text style={styles.ratingBarPercent}>{ratingPercentages[index]}%</Text>
-                </View>
-              ))}
-            </View>
+          <View style={styles.revHead}>
+            <Text style={styles.secTitle}>Reviews</Text>
+            <Text style={styles.revAll}>View all reviews</Text>
           </View>
+          <View style={styles.revScore}>
+            <Text style={styles.bigNum}>{hotel.rating.toFixed(1)}</Text>
+            <Text style={styles.stars}>★★★★★</Text>
+            <Text style={styles.revCount}>({hotel.numberOfReviews})</Text>
+          </View>
+
+          {/* Rating Bars */}
+          {[5, 4, 3, 2, 1].map((star, idx) => (
+            <View key={star} style={styles.barRow}>
+              <Text style={styles.barLbl}>{star}</Text>
+              <View style={styles.barTrack}>
+                <View
+                  style={[
+                    styles.barFill,
+                    {
+                      width: `${ratingPercentages[idx]}%`,
+                      backgroundColor: [
+                        '#FFB800',
+                        '#FFC940',
+                        '#E8E0C8',
+                        '#D8D0B8',
+                        '#C8C0A8',
+                      ][idx],
+                    },
+                  ]}
+                />
+              </View>
+              <Text style={styles.barPct}>{ratingPercentages[idx]}%</Text>
+            </View>
+          ))}
 
           {/* Divider */}
-          <View style={styles.divider} />
-
-          {/* Check-in/Check-out */}
-          <View style={styles.section}>
-            <Text style={styles.sectionHeader}>Check-in & Check-out</Text>
-            <View style={styles.timeRow}>
-              <View style={styles.timeBox}>
-                <Text style={styles.timeLabel}>Check-in</Text>
-                <Text style={styles.timeValue}>{hotel.checkinTime}</Text>
-              </View>
-              <View style={styles.timeBox}>
-                <Text style={styles.timeLabel}>Check-out</Text>
-                <Text style={styles.timeValue}>{hotel.checkoutTime}</Text>
-              </View>
-            </View>
-          </View>
-
-          {/* Contact */}
-          <View style={styles.section}>
-            <Text style={styles.sectionHeader}>Contact</Text>
-            <View style={styles.contactRow}>
-              <Ionicons name="call" size={14} color={RealixColors.accent} />
-              <Text style={styles.contactText}>{hotel.contactNumber}</Text>
-            </View>
-          </View>
+          <View style={styles.dividerLine} />
 
           {/* Price */}
-          <View style={styles.section}>
-            <View style={styles.priceRow}>
-              <Text style={styles.priceLabel}>Price:</Text>
-              <Text style={styles.priceValue}>${hotel.pricePerNight} /night</Text>
-            </View>
+          <View style={styles.priceRow}>
+            <Text style={styles.priceLabel}>Price:</Text>
+            <Text style={styles.priceValue}>${hotel.pricePerNight} /night</Text>
           </View>
-        </ScrollView>
 
-        {/* Bottom CTA Bar */}
-        <View style={styles.bottomBar}>
-          <Ionicons name="heart-outline" size={16} color="white" />
-          <Pressable style={styles.bookButton}>
-            <Text style={styles.bookButtonText}>Book Now</Text>
-          </Pressable>
         </View>
+      </ScrollView>
+
+      {/* Bottom Bar */}
+      <View style={styles.bottomBar}>
+        <Pressable style={styles.heartOutline}>
+          <Ionicons name="heart-outline" size={14} color="#fff" />
+        </Pressable>
+        <Pressable style={styles.bookBtn}>
+          <Text style={styles.bookTxt}>Book Now</Text>
+        </Pressable>
       </View>
     </SafeAreaView>
   );
@@ -341,309 +320,314 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: RealixColors.pageBackground,
   },
-  swipeContainer: {
-    flex: 1,
-  },
-  header: {
+  headerBar: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: RealixColors.pageBackground,
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: RealixColors.cardBackground,
   },
-  headerIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  headerBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: RealixColors.rowBackground,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: RealixColors.cardBackground,
   },
   headerRight: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 6,
   },
-  content: {
-    paddingBottom: 32,
+  scrollContent: {
+    paddingBottom: 16,
   },
-  imageCarousel: {
-    position: 'relative',
+  heroSection: {
     width: '100%',
-    height: 280,
+    height: 160,
+    backgroundColor: RealixColors.border,
+    position: 'relative',
+    overflow: 'hidden',
   },
   heroImage: {
     width: '100%',
     height: '100%',
-    backgroundColor: RealixColors.border,
   },
-  imageIndicators: {
-    position: 'absolute',
-    bottom: 12,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 6,
-  },
-  indicator: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: 'rgba(255,255,255,0.5)',
-  },
-  indicatorActive: {
-    backgroundColor: '#fff',
-    width: 20,
-  },
-  noImageContainer: {
-    width: '100%',
-    height: 280,
-    backgroundColor: RealixColors.cardBackground,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  favoriteButton: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  section: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    gap: 8,
-  },
-  propertyName: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: RealixColors.textPrimary,
-  },
-  locationRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 6,
-  },
-  locationText: {
-    fontSize: 12,
-    color: RealixColors.textMuted,
-    flex: 1,
-  },
-  sectionHeader: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: RealixColors.textPrimary,
-    marginTop: 8,
-  },
-  description: {
-    fontSize: 12,
-    color: RealixColors.textSecondary,
-    lineHeight: 18,
-  },
-  amenitiesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginTop: 8,
-  },
-  amenityItem: {
-    alignItems: 'center',
-    width: '18%',
-  },
-  amenityIcon: {
-    fontSize: 20,
-    marginBottom: 4,
-  },
-  amenityLabel: {
-    fontSize: 9,
-    color: RealixColors.textMuted,
-    textAlign: 'center',
-  },
-  allAmenitiesLink: {
-    fontSize: 11,
-    color: '#7BC820',
-    fontWeight: '600',
-    marginTop: 8,
-  },
-  galleryContainer: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 8,
-  },
-  galleryItem: {
-    flex: 1,
-    height: 100,
-    borderRadius: 8,
-    overflow: 'hidden',
-    backgroundColor: RealixColors.border,
-    position: 'relative',
-  },
-  galleryImage: {
+  noImage: {
     width: '100%',
     height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: RealixColors.border,
   },
-  galleryOverlay: {
+  favoriteBtn: {
     position: 'absolute',
-    inset: 0,
+    top: 8,
+    right: 8,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     backgroundColor: 'rgba(0,0,0,0.6)',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  galleryOverlayText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: '700',
+  dots: {
+    position: 'absolute',
+    bottom: 8,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 5,
   },
-  mapPlaceholder: {
-    width: '100%',
-    height: 120,
-    backgroundColor: RealixColors.cardBackground,
-    borderRadius: 12,
+  dot: {
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: 'rgba(255,255,255,0.4)',
+  },
+  dotActive: {
+    width: 14,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+  },
+  bodyContent: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    gap: 8,
+  },
+  propName: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: RealixColors.textPrimary,
+    marginBottom: 2,
+  },
+  locRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    marginBottom: 8,
+  },
+  pin: {
+    width: 8,
+    height: 10,
+    borderRadius: 4,
+    borderWidth: 1.2,
+    borderColor: RealixColors.textMuted,
+    flex: 0,
+  },
+  locText: {
+    fontSize: 11,
+    color: RealixColors.textSecondary,
+    flex: 1,
+  },
+  secTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: RealixColors.textPrimary,
+    marginTop: 6,
+    marginBottom: 4,
+  },
+  aboutText: {
+    fontSize: 11,
+    color: RealixColors.textSecondary,
+    lineHeight: 14,
+    marginBottom: 8,
+  },
+  amenRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 4,
+    flexWrap: 'wrap',
+  },
+  amenity: {
+    alignItems: 'center',
+    width: '20%',
+  },
+  amenIcon: {
+    width: 28,
+    height: 28,
+    borderRadius: 6,
+    backgroundColor: RealixColors.rowBackground,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 8,
+    marginBottom: 2,
   },
-  reviewsHeader: {
+  amenIconText: {
+    fontSize: 15,
+    color: RealixColors.textPrimary,
+  },
+  amenLabel: {
+    fontSize: 9,
+    color: RealixColors.textMuted,
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  allLink: {
+    fontSize: 10,
+    color: RealixColors.accent,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  galleryRow: {
+    flexDirection: 'row',
+    gap: 4,
+    marginBottom: 8,
+  },
+  thumb: {
+    flex: 1,
+    height: 40,
+    borderRadius: 5,
+    backgroundColor: RealixColors.border,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  thumbImg: {
+    width: '100%',
+    height: '100%',
+  },
+  thumbOverlay: {
+    position: 'absolute',
+    inset: 0,
+    backgroundColor: 'rgba(0,0,0,0.65)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  overlayText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  mapBox: {
+    width: '100%',
+    height: 65,
+    backgroundColor: RealixColors.rowBackground,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  mapPin: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: RealixColors.accent,
+    borderWidth: 1.5,
+    borderColor: RealixColors.cardBackground,
+  },
+  revHead: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 4,
   },
-  viewAllLink: {
-    fontSize: 10,
-    color: '#7BC820',
+  revAll: {
+    fontSize: 7.5,
+    color: RealixColors.accent,
     fontWeight: '600',
   },
-  ratingDisplay: {
+  revScore: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginTop: 12,
+    gap: 4,
+    marginBottom: 7,
   },
-  ratingNumber: {
-    fontSize: 22,
+  bigNum: {
+    fontSize: 18,
     fontWeight: '700',
     color: RealixColors.textPrimary,
   },
   stars: {
-    color: '#FFB800',
-    fontSize: 14,
-    letterSpacing: -1,
-  },
-  ratingCount: {
     fontSize: 10,
-    color: RealixColors.textMuted,
+    color: '#FFB800',
+    letterSpacing: 0.5,
   },
-  ratingBars: {
-    marginTop: 12,
-    gap: 6,
+  revCount: {
+    fontSize: 10,
+    color: RealixColors.textSecondary,
+    fontWeight: '500',
   },
-  ratingBarRow: {
+  barRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 4,
+    marginBottom: 3,
   },
-  ratingBarStar: {
+  barLbl: {
     fontSize: 10,
-    color: '#FFB800',
-    minWidth: 20,
+    color: RealixColors.textSecondary,
+    width: 10,
+    textAlign: 'right',
+    fontWeight: '500',
   },
-  ratingBarTrack: {
+  barTrack: {
     flex: 1,
-    height: 6,
-    backgroundColor: '#E8E8E8',
-    borderRadius: 3,
+    height: 5,
+    backgroundColor: RealixColors.rowBackground,
+    borderRadius: 2.5,
     overflow: 'hidden',
   },
-  ratingBarFill: {
+  barFill: {
     height: '100%',
-    borderRadius: 3,
+    borderRadius: 2.5,
   },
-  ratingBarPercent: {
+  barPct: {
     fontSize: 10,
-    color: RealixColors.textMuted,
-    minWidth: 28,
+    color: RealixColors.textSecondary,
+    width: 24,
     textAlign: 'right',
+    fontWeight: '500',
   },
-  divider: {
+  dividerLine: {
     height: 1,
     backgroundColor: RealixColors.border,
-    marginVertical: 16,
-  },
-  timeRow: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 8,
-  },
-  timeBox: {
-    flex: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    backgroundColor: RealixColors.cardBackground,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  timeLabel: {
-    fontSize: 10,
-    color: RealixColors.textMuted,
-    marginBottom: 4,
-  },
-  timeValue: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: RealixColors.textPrimary,
-  },
-  contactRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 8,
-  },
-  contactText: {
-    fontSize: 12,
-    color: RealixColors.textSecondary,
+    marginVertical: 8,
   },
   priceRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 8,
+    marginBottom: 4,
   },
   priceLabel: {
-    fontSize: 12,
-    color: RealixColors.textMuted,
+    fontSize: 9,
+    color: RealixColors.textSecondary,
   },
   priceValue: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '700',
     color: RealixColors.textPrimary,
   },
   bottomBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     borderTopWidth: 1,
     borderTopColor: RealixColors.border,
-    backgroundColor: RealixColors.screenBackground,
+    backgroundColor: RealixColors.cardBackground,
   },
-  bookButton: {
+  heartOutline: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 1.2,
+    borderColor: RealixColors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bookBtn: {
     flex: 1,
-    backgroundColor: '#7BC820',
-    paddingVertical: 12,
-    borderRadius: 24,
+    backgroundColor: RealixColors.accent,
+    borderRadius: 18,
+    paddingVertical: 8.5,
     alignItems: 'center',
   },
-  bookButtonText: {
-    color: 'white',
-    fontSize: 14,
+  bookTxt: {
+    fontSize: 12,
     fontWeight: '700',
+    color: '#000',
   },
   loadingContainer: {
     flex: 1,
@@ -657,19 +641,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   errorText: {
-    fontSize: 14,
+    fontSize: 13,
     color: RealixColors.textSecondary,
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   backButton: {
     paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 12,
+    paddingVertical: 10,
+    borderRadius: 8,
     backgroundColor: RealixColors.accent,
   },
   backButtonText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
     color: '#000',
   },
