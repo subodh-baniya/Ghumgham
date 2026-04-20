@@ -70,7 +70,7 @@ export default function HomeScreen() {
           setProfileImage(response.data.data.profilePicture);
         }
       } catch (err: any) {
-        // Silent error - avatar shows empty if profile fetch fails
+        // Profile image fetch failed silently
       } finally {
         setProfileLoading(false);
       }
@@ -84,6 +84,7 @@ export default function HomeScreen() {
     const fetchFeaturedHotels = async () => {
       try {
         setLoading(true);
+        
         const response = await axios.get(FEATURED_HOTEL, {
           withCredentials: true,
           headers: {
@@ -95,9 +96,14 @@ export default function HomeScreen() {
         
         if (response.data.success && response.data.data) {
           setFeaturedHotels(response.data.data);
+        } else {
+          setError("No featured hotels available");
         }
       } catch (err: any) {
-        setError(err.message || "Failed to load featured hotels");
+        const errorMessage = err.response?.data?.message || 
+                           err.message || 
+                           "Failed to load featured hotels";
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -239,7 +245,10 @@ export default function HomeScreen() {
                     styles.propertyCard,
                     pressed && styles.pressed,
                   ]}
-                  onPress={() => router.push("/(tabs)/explore/detail")}
+                  onPress={() => router.push({
+                    pathname: "/(tabs)/explore/detail",
+                    params: { hotelId: hotel._id }
+                  })}
                 >
                   {hotel.hotelImages && hotel.hotelImages.length > 0 ? (
                     <Image
