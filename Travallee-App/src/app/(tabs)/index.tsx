@@ -181,7 +181,7 @@ export default function HomeScreen() {
         </Pressable>
 
         <View style={styles.sectionBlock}>
-          <Pressable style={styles.popularBanner} onPress={() => router.push("/(tabs)/explore/exploree")}>
+          <Pressable style={styles.popularBanner} onPress={() => router.push("/(tabs)/explore")}>
             <Image 
               source={{ uri: 'https://images.unsplash.com/photo-1502581578900-81cf6f47f194?w=800&h=200&fit=crop' }}
               style={styles.bannerImage}
@@ -301,7 +301,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.sectionBlock}>
-          <Pressable style={styles.popularBanner} onPress={() => router.push("/(tabs)/explore/exploree")}>
+          <Pressable style={styles.popularBanner} onPress={() => router.push("/(tabs)/explore")}>
             <Image 
               source={{ uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=200&fit=crop' }}
               style={styles.bannerImage}
@@ -431,7 +431,7 @@ export default function HomeScreen() {
           </View>
           <Pressable
             style={styles.promoButton}
-            onPress={() => router.push("/(tabs)/explore/exploree")}
+            onPress={() => router.push("/(tabs)/explore")}
           >
             <Text style={styles.promoButtonText}>Explore now</Text>
           </Pressable>
