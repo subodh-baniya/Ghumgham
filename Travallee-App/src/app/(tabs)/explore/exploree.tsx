@@ -118,6 +118,11 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingTop: 8,
   },
+  headerActions: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+  },
   title: {
     fontSize: 28,
     fontWeight: '700',
@@ -131,6 +136,16 @@ const styles = StyleSheet.create({
     maxWidth: 260,
   },
   searchButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: RealixColors.cardBackground,
+    borderWidth: 1,
+    borderColor: RealixColors.border,
+  },
+  backButton: {
     width: 42,
     height: 42,
     borderRadius: 21,
