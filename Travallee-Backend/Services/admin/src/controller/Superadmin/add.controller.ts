@@ -1,5 +1,5 @@
 //@ts-ignore
-import { apiError, asyncHandler, apiResponse , UserModel, sendEmail} from "@packages";
+import { apiError, asyncHandler, apiResponse , UserModel, sendEmail, uploadToCloudinary} from "@packages";
 
 
 const addSuperadmin = asyncHandler(async (req:any, res:any) => {
@@ -65,14 +65,49 @@ const deleteSuperadmin = asyncHandler(async (req:any, res:any) => {
 })  
 
 const HomepageFrontbannerUpload = asyncHandler(async (req:any, res:any) => {
-    const { image } = req.body;
+    const {photo} = req.files;
+    const {alt} = req.body;
+    if(alt.length < 0 || alt.length > 100){
+        return apiError(res, 400, "Alt text should be between 0 and 100 characters");
+    }
+    const userid = req.user.id;
+    if (!userid) {
+        return apiError(res, 401, "Unauthorized Only superadmin can upload homepage front banner");
+    }
 
-    // Logic to save the image to the database or file storage
+    if (!photo) {
+        return apiError(res, 400, "No photo uploaded");
+    }
+
+    const result = await uploadToCloudinary(photo, alt);
 
     return apiResponse(res, 200, true, "Homepage front banner uploaded successfully");
 }
+)
+
+
+const dealsBannerUpload = asyncHandler(async (req:any, res:any) => {
+    const {photo} = req.files;
+    const {alt} = req.body;
+    if(alt.length < 0 || alt.length > 100){
+        return apiError(res, 400, "Alt text should be between 0 and 100 characters");
+    }
+    const userid = req.user.id;
+    if (!userid) {
+        return apiError(res, 401, "Unauthorized Only superadmin can upload deals banner");
+    }
+
+    if (!photo) {
+        return apiError(res, 400, "No photo uploaded");
+    }
+
+    const result = await uploadToCloudinary(photo, alt);
+
+    return apiResponse(res, 200, true, "Deals banner uploaded successfully");
+}
+)
 
 
 
 
-export default { addSuperadmin, addAdmin, deleteAdmin, deleteSuperadmin, };   
+export default { addSuperadmin, addAdmin, deleteAdmin, deleteSuperadmin, HomepageFrontbannerUpload, dealsBannerUpload };   
