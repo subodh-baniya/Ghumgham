@@ -15,6 +15,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
 import { useAuth } from "@/src/context/AuthContext";
+import { useLocation } from "@/src/hooks/useLocation";
+import { showLocationPrompt } from "@/src/services/locationService";
 import { RealixColors } from "@/src/constants/screens/realix";
 import axios from "axios";
 import { API_ENDPOINTS_HOTEL } from "@/src/constants/api";
@@ -288,6 +290,19 @@ export default function HomeScreen() {
   const [error, setError] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
+  
+  // Location hook
+  const { location, address, loading: locationLoading, permissionGranted, requestPermission } = useLocation();
+
+  // Request location on mount if not already requested
+  useEffect(() => {
+    if (!permissionGranted && !locationLoading) {
+      showLocationPrompt(
+        () => requestPermission(),
+        () => console.log("Location permission denied")
+      );
+    }
+  }, [permissionGranted, locationLoading, requestPermission]);
 
   useEffect(() => {
     (async () => {
@@ -370,16 +385,26 @@ export default function HomeScreen() {
         </View>
 
         {/* ── Location bar ── */}
-        <View style={s.locBar}>
+        <Pressable 
+          style={({ pressed }) => [s.locBar, pressed && { opacity: 0.8 }]}
+          onPress={() => permissionGranted ? undefined : requestPermission()}
+        >
           <Ionicons name="location-sharp" size={13} color={N.crimson} />
-          <Text style={s.locBarText}>Kathmandu, Nepal</Text>
-          <Ionicons name="chevron-down" size={13} color={N.textMuted} />
+          <Text style={s.locBarText} numberOfLines={1}>
+            {locationLoading ? "Getting location..." : address || "Enable location"}
+          </Text>
+          {!permissionGranted && !locationLoading && (
+            <Ionicons name="alert-circle" size={13} color={N.saffron} />
+          )}
+          {permissionGranted && !locationLoading && (
+            <Ionicons name="checkmark-circle" size={13} color={N.saffron} />
+          )}
           <View style={s.locBarDivider} />
           <Ionicons name="calendar-outline" size={13} color={N.textMuted} />
           <Text style={s.locBarDate}>
             {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })}
           </Text>
-        </View>
+        </Pressable>
 
         {/* ── AI mode bar ── */}
         <Pressable style={({ pressed }) => [s.aiBar, pressed && { opacity: 0.8 }]}>
@@ -653,7 +678,7 @@ const s = StyleSheet.create({
     borderWidth: 1,
     borderColor: N.cardBorder,
   },
-  locBarText: { fontSize: 13, fontWeight: "600", color: N.textPrimary },
+  locBarText: { flex: 1, fontSize: 13, fontWeight: "600", color: N.textPrimary },
   locBarDivider: { width: 0.5, height: 14, backgroundColor: N.divider, marginHorizontal: 4 },
   locBarDate: { fontSize: 13, color: N.textSecond },
 
