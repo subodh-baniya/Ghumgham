@@ -16,7 +16,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
 import { useAuth } from "@/src/context/AuthContext";
 import { useLocation } from "@/src/hooks/useLocation";
-import { showLocationPrompt } from "@/src/services/locationService";
 import { RealixColors } from "@/src/constants/screens/realix";
 import axios from "axios";
 import { API_ENDPOINTS_HOTEL } from "@/src/constants/api";
@@ -282,7 +281,7 @@ const stat = StyleSheet.create({
 
 // ─── Main screen ──────────────────────────────────────────────────────────────
 export default function HomeScreen() {
-  const API_PROFILE_IMAGE = API_ENDPOINTS_AUTH.USER_PROFILE;
+  const API_PROFILE = API_ENDPOINTS_AUTH.PROFILE;
   const FEATURED_HOTEL = API_ENDPOINTS_HOTEL.FEATURED_HOTELS;
 
   const [featuredHotels, setFeaturedHotels] = useState<Hotel[]>([]);
@@ -290,33 +289,33 @@ export default function HomeScreen() {
   const [error, setError] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
+  const [userName, setUserName] = useState<string>("");
   
   // Location hook
   const { location, address, loading: locationLoading, permissionGranted, requestPermission } = useLocation();
-
-  // Request location on mount if not already requested
-  useEffect(() => {
-    if (!permissionGranted && !locationLoading) {
-      showLocationPrompt(
-        () => requestPermission(),
-        () => console.log("Location permission denied")
-      );
-    }
-  }, [permissionGranted, locationLoading, requestPermission]);
 
   useEffect(() => {
     (async () => {
       try {
         const token = await SecureStore.getItemAsync("userToken");
         if (!token) return;
-        const r = await axios.get(API_PROFILE_IMAGE, {
+        
+        const profileRes = await axios.get(API_PROFILE, {
           headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
           timeout: 10000,
         });
-        if (r.data.success && r.data.data?.profilePicture)
-          setProfileImage(r.data.data.profilePicture);
-      } catch {}
-      finally { setProfileLoading(false); }
+        
+        if (profileRes.data.success && profileRes.data.data) {
+          setUserName(profileRes.data.data.name || "");
+          if (profileRes.data.data.profilePicture) {
+            setProfileImage(profileRes.data.data.profilePicture);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      } finally { 
+        setProfileLoading(false); 
+      }
     })();
   }, []);
 
@@ -337,7 +336,7 @@ export default function HomeScreen() {
 
   const { user } = useAuth();
   const router = useRouter();
-  const displayName = (user?.name as string) ?? "";
+  const displayName = userName 
   const firstName = displayName.split(" ")[0] || "Traveller";
   const initials = displayName.split(" ").map((n) => n[0]).join("").toUpperCase() || "U";
 
