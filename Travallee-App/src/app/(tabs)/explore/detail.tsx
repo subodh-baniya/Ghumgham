@@ -39,9 +39,9 @@ const getAmenityIcon = (facility: string): string => {
     'swimming': '☀',
     'wifi': '⬢',
     'free wifi': '⬢',
-    'restaurant': '🍴',
-    'bar': '🍸',
-    'business': '💼',
+    'restaurant': '⟐',
+    'bar': '◆',
+    'business': '❑',
     'parking': '⊟',
     'gym': '⊗',
     'pool': '☀',
@@ -253,6 +253,24 @@ export default function HotelDetailScreen() {
             <View style={styles.mapPin} />
           </View>
 
+          {/* Rooms */}
+          {hotel.rooms && hotel.rooms.length > 0 && (
+            <>
+              <Text style={styles.secTitle}>Available Rooms</Text>
+              <View style={styles.roomsRow}>
+                {hotel.rooms.slice(0, 3).map((room, idx) => (
+                  <View key={idx} style={styles.roomCard}>
+                    <View style={{ width: '100%', height: '100%', backgroundColor: RealixColors.rowBackground, alignItems: 'center', justifyContent: 'center' }}>
+                      <Text style={{ fontSize: 12, color: RealixColors.textSecondary, fontWeight: '600' }}>
+                        {room.roomType || `Room ${idx + 1}`}
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            </>
+          )}
+
           {/* Reviews */}
           <View style={styles.revHead}>
             <Text style={styles.secTitle}>Reviews</Text>
@@ -345,7 +363,7 @@ const styles = StyleSheet.create({
   },
   heroSection: {
     width: '100%',
-    height: 160,
+    height: 280,
     backgroundColor: RealixColors.border,
     position: 'relative',
     overflow: 'hidden',
@@ -363,11 +381,11 @@ const styles = StyleSheet.create({
   },
   favoriteBtn: {
     position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 26,
-    height: 26,
-    borderRadius: 13,
+    top: 12,
+    right: 12,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: 'rgba(0,0,0,0.6)',
     alignItems: 'center',
     justifyContent: 'center',
@@ -392,46 +410,55 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.9)',
   },
   bodyContent: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    gap: 10,
   },
   propName: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 32,
+    fontWeight: '800',
     color: RealixColors.textPrimary,
-    marginBottom: 2,
+    marginBottom: 8,
+    letterSpacing: 0.3,
+    lineHeight: 38,
+    textAlign: 'center',
   },
   locRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3,
-    marginBottom: 8,
+    alignItems: 'flex-start',
+    gap: 6,
+    marginBottom: 10,
   },
   pin: {
-    width: 8,
-    height: 10,
-    borderRadius: 4,
-    borderWidth: 1.2,
-    borderColor: RealixColors.textMuted,
+    width: 20,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 1.8,
+    borderColor: RealixColors.accent,
     flex: 0,
+    backgroundColor: RealixColors.accent,
+    opacity: 0.9,
+    marginTop: 2,
   },
   locText: {
-    fontSize: 11,
+    fontSize: 16,
     color: RealixColors.textSecondary,
+    lineHeight: 20,
     flex: 1,
+    fontWeight: '600',
+    fontStyle: 'italic',
   },
   secTitle: {
-    fontSize: 13,
+    fontSize: 18,
     fontWeight: '700',
     color: RealixColors.textPrimary,
-    marginTop: 6,
-    marginBottom: 4,
+    marginTop: 8,
+    marginBottom: 6,
   },
   aboutText: {
-    fontSize: 11,
+    fontSize: 14,
     color: RealixColors.textSecondary,
-    lineHeight: 14,
+    lineHeight: 18,
     marginBottom: 8,
   },
   amenRow: {
@@ -445,39 +472,40 @@ const styles = StyleSheet.create({
     width: '20%',
   },
   amenIcon: {
-    width: 28,
-    height: 28,
-    borderRadius: 6,
+    width: 48,
+    height: 48,
+    borderRadius: 8,
     backgroundColor: RealixColors.rowBackground,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 2,
+    marginBottom: 4,
   },
   amenIconText: {
-    fontSize: 15,
+    fontSize: 22,
     color: RealixColors.textPrimary,
   },
   amenLabel: {
-    fontSize: 9,
+    fontSize: 13,
     color: RealixColors.textMuted,
     textAlign: 'center',
     fontWeight: '500',
+    lineHeight: 15,
   },
   allLink: {
-    fontSize: 10,
+    fontSize: 13,
     color: RealixColors.accent,
     fontWeight: '600',
     marginBottom: 8,
   },
   galleryRow: {
     flexDirection: 'row',
-    gap: 4,
-    marginBottom: 8,
+    gap: 6,
+    marginBottom: 10,
   },
   thumb: {
     flex: 1,
-    height: 40,
-    borderRadius: 5,
+    height: 100,
+    borderRadius: 8,
     backgroundColor: RealixColors.border,
     overflow: 'hidden',
     position: 'relative',
@@ -495,25 +523,42 @@ const styles = StyleSheet.create({
   },
   overlayText: {
     color: '#fff',
-    fontSize: 10,
+    fontSize: 13,
     fontWeight: '700',
   },
   mapBox: {
     width: '100%',
-    height: 65,
+    height: 130,
     backgroundColor: RealixColors.rowBackground,
-    borderRadius: 6,
+    borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   mapPin: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
     backgroundColor: RealixColors.accent,
-    borderWidth: 1.5,
+    borderWidth: 2,
     borderColor: RealixColors.cardBackground,
+  },
+  roomsRow: {
+    flexDirection: 'row',
+    gap: 6,
+    marginBottom: 10,
+  },
+  roomCard: {
+    flex: 1,
+    height: 100,
+    borderRadius: 8,
+    backgroundColor: RealixColors.border,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  roomCardImg: {
+    width: '100%',
+    height: '100%',
   },
   revHead: {
     flexDirection: 'row',
@@ -522,7 +567,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   revAll: {
-    fontSize: 7.5,
+    fontSize: 11,
     color: RealixColors.accent,
     fontWeight: '600',
   },
@@ -533,17 +578,17 @@ const styles = StyleSheet.create({
     marginBottom: 7,
   },
   bigNum: {
-    fontSize: 18,
+    fontSize: 28,
     fontWeight: '700',
     color: RealixColors.textPrimary,
   },
   stars: {
-    fontSize: 10,
+    fontSize: 14,
     color: '#FFB800',
-    letterSpacing: 0.5,
+    letterSpacing: 1,
   },
   revCount: {
-    fontSize: 10,
+    fontSize: 13,
     color: RealixColors.textSecondary,
     fontWeight: '500',
   },
@@ -554,17 +599,17 @@ const styles = StyleSheet.create({
     marginBottom: 3,
   },
   barLbl: {
-    fontSize: 10,
+    fontSize: 13,
     color: RealixColors.textSecondary,
-    width: 10,
+    width: 14,
     textAlign: 'right',
     fontWeight: '500',
   },
   barTrack: {
     flex: 1,
-    height: 5,
+    height: 8,
     backgroundColor: RealixColors.rowBackground,
-    borderRadius: 2.5,
+    borderRadius: 4,
     overflow: 'hidden',
   },
   barFill: {
@@ -572,9 +617,9 @@ const styles = StyleSheet.create({
     borderRadius: 2.5,
   },
   barPct: {
-    fontSize: 10,
+    fontSize: 13,
     color: RealixColors.textSecondary,
-    width: 24,
+    width: 28,
     textAlign: 'right',
     fontWeight: '500',
   },
@@ -590,11 +635,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   priceLabel: {
-    fontSize: 9,
+    fontSize: 12,
     color: RealixColors.textSecondary,
   },
   priceValue: {
-    fontSize: 12,
+    fontSize: 18,
     fontWeight: '700',
     color: RealixColors.textPrimary,
   },
@@ -625,7 +670,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   bookTxt: {
-    fontSize: 12,
+    fontSize: 15,
     fontWeight: '700',
     color: '#000',
   },
@@ -641,19 +686,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   errorText: {
-    fontSize: 13,
+    fontSize: 16,
     color: RealixColors.textSecondary,
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   backButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 10,
     backgroundColor: RealixColors.accent,
   },
   backButtonText: {
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: '600',
     color: '#000',
   },
