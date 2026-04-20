@@ -64,6 +64,13 @@ const deleteSuperadmin = asyncHandler(async (req:any, res:any) => {
     return apiResponse(res, 200, true, "Superadmin deleted successfully");
 })  
 
+const HomepageFrontbannerUpload = asyncHandler(async (req:any, res:any) => {
+    const { image } = req.body;
+
+    // Logic to save the image to the database or file storage
+
+    return apiResponse(res, 200, true, "Homepage front banner uploaded successfully");
+}
 
 
 
