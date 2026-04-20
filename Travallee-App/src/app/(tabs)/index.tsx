@@ -8,7 +8,6 @@ import * as SecureStore from "expo-secure-store";
 import { useAuth } from "@/src/context/AuthContext";
 import {
   RealixColors,
-  realixDestinations,
 } from "@/src/constants/screens/realix";
 import axios from "axios";
 import { API_ENDPOINTS_HOTEL } from "@/src/constants/api";
@@ -101,8 +100,7 @@ export default function HomeScreen() {
         }
       } catch (err: any) {
         const errorMessage = err.response?.data?.message || 
-                           err.message || 
-                           "Failed to load featured hotels";
+                           err.message ||  "Failed to load featured hotels";
         setError(errorMessage);
       } finally {
         setLoading(false);
@@ -183,33 +181,144 @@ export default function HomeScreen() {
         </Pressable>
 
         <View style={styles.sectionBlock}>
-          <Text style={styles.sectionTitle}>Popular places</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.destinationRow}
-          >
-            {realixDestinations.map((destination) => (
-              <Pressable key={destination.id} style={styles.destinationItem}>
-                <View
-                  style={[
-                    styles.destinationCircle,
-                    { backgroundColor: destination.color },
-                  ]}
-                >
-                  <Text style={styles.destinationEmoji}>
-                    {destination.emoji}
-                  </Text>
-                </View>
-                <Text style={styles.destinationLabel}>{destination.label}</Text>
-              </Pressable>
-            ))}
-          </ScrollView>
+          <Pressable style={styles.popularBanner} onPress={() => router.push("/(tabs)/explore/exploree")}>
+            <Image 
+              source={{ uri: 'https://images.unsplash.com/photo-1502581578900-81cf6f47f194?w=800&h=200&fit=crop' }}
+              style={styles.bannerImage}
+            />
+            <View style={styles.bannerOverlay}>
+              <View style={styles.bannerSmallContent}>
+                <Text style={styles.bannerSmallTitle}>Explore Destinations</Text>
+                <Text style={styles.bannerSmallText}>Find your next stay</Text>
+              </View>
+              <Ionicons name="arrow-forward" size={20} color="#ffffff" />
+            </View>
+          </Pressable>
         </View>
 
         <View style={styles.sectionBlock}>
           <View style={styles.sectionHeadingRow}>
             <Text style={styles.sectionTitle}>Featured property</Text>
+            <Pressable onPress={() => router.push("/(tabs)/explore/detail")}>
+              <Text style={styles.sectionLink}>See all</Text>
+            </Pressable>
+          </View>
+
+          {loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={RealixColors.accent} />
+            </View>
+          ) : error || featuredHotels.length === 0 ? (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>
+                {error || "No featured hotels available"}
+              </Text>
+              {error && (
+                <Text style={styles.errorSmallText}>
+                  Make sure backend is running on {FEATURED_HOTEL.split("/")[2]}
+                </Text>
+              )}
+            </View>
+          ) : (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.hotelsCarouselContainer}
+              snapToInterval={320}
+              decelerationRate="fast"
+            >
+              {featuredHotels.map((hotel) => (
+                <Pressable
+                  key={hotel._id}
+                  style={({ pressed }) => [
+                    styles.propertyCard,
+                    pressed && styles.pressed,
+                  ]}
+                  onPress={() => router.push({
+                    pathname: "/(tabs)/explore/detail",
+                    params: { hotelId: hotel._id }
+                  })}
+                >
+                  {hotel.hotelImages && hotel.hotelImages.length > 0 ? (
+                    <Image
+                      source={{ uri: hotel.hotelImages[0] }}
+                      style={styles.propertyImageReal}
+                    />
+                  ) : (
+                    <View style={styles.propertyImage}>
+                      <View style={styles.sky} />
+                      <View style={styles.grass} />
+                      <View style={styles.houseRoof} />
+                      <View style={styles.houseBody}>
+                        <View style={styles.window} />
+                        <View style={styles.door} />
+                        <View style={styles.window} />
+                      </View>
+                    </View>
+                  )}
+
+                  <Pressable style={styles.favoriteButton}>
+                    <Ionicons
+                      name="heart-outline"
+                      size={16}
+                      color={RealixColors.textMuted}
+                    />
+                  </Pressable>
+
+                  <View style={styles.propertyContent}>
+                    <Text style={styles.propertyTag}>
+                      {hotel.propertyType} • {hotel.hotelLocation}
+                    </Text>
+                    <Text style={styles.propertyName}>{hotel.hotelName}</Text>
+                    <Text style={styles.propertyDescription} numberOfLines={1}>
+                      {hotel.hotelDescription}
+                    </Text>
+                    <View style={styles.ratingRow}>
+                      <Ionicons
+                        name="star"
+                        size={14}
+                        color={RealixColors.orange}
+                      />
+                      <Text style={styles.rating}>
+                        {hotel.rating.toFixed(1)}
+                      </Text>
+                      <Text style={styles.reviews}>
+                        ({hotel.numberOfReviews} reviews)
+                      </Text>
+                    </View>
+                    <Text style={styles.propertyPrice}>
+                      Start from{" "}
+                      <Text style={styles.propertyPriceStrong}>
+                        ${hotel.pricePerNight}
+                      </Text>{" "}
+                      / night
+                    </Text>
+                  </View>
+                </Pressable>
+              ))}
+            </ScrollView>
+          )}
+        </View>
+
+        <View style={styles.sectionBlock}>
+          <Pressable style={styles.popularBanner} onPress={() => router.push("/(tabs)/explore/exploree")}>
+            <Image 
+              source={{ uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=200&fit=crop' }}
+              style={styles.bannerImage}
+            />
+            <View style={styles.bannerOverlay}>
+              <View style={styles.bannerSmallContent}>
+                <Text style={styles.bannerSmallTitle}>Special Offers</Text>
+                <Text style={styles.bannerSmallText}>Limited time deals</Text>
+              </View>
+              <Ionicons name="arrow-forward" size={20} color="#ffffff" />
+            </View>
+          </Pressable>
+        </View>
+
+        <View style={styles.sectionBlock}>
+          <View style={styles.sectionHeadingRow}>
+            <Text style={styles.sectionTitle}>Hotels nearby</Text>
             <Pressable onPress={() => router.push("/(tabs)/explore/detail")}>
               <Text style={styles.sectionLink}>See all</Text>
             </Pressable>
@@ -660,6 +769,94 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
     color: "#000000",
+  },
+  popularBanner: {
+    borderRadius: 16,
+    overflow: "hidden",
+    height: 150,
+    width: "100%",
+  },
+  bannerImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  bannerOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+  },
+  bannerSmallContent: {
+    gap: 4,
+    flex: 1,
+  },
+  bannerSmallTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#ffffff",
+  },
+  bannerSmallText: {
+    fontSize: 12,
+    color: "#e8e8e8",
+  },
+  bannerGradient: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 24,
+    borderRadius: 24,
+    backgroundColor: "#1a5f7a",
+    borderWidth: 1,
+    borderColor: "#2a8faa",
+  },
+  bannerContent: {
+    flex: 1,
+    gap: 12,
+    marginRight: 20,
+  },
+  bannerEye: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#7ed3c1",
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+  },
+  bannerTitle: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#ffffff",
+    lineHeight: 32,
+  },
+  bannerSubtitle: {
+    fontSize: 13,
+    color: "#b0d9e8",
+    lineHeight: 20,
+  },
+  bannerCTA: {
+    alignSelf: "flex-start",
+    backgroundColor: "#7ed3c1",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
+    marginTop: 4,
+  },
+  bannerCTAText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#1a5f7a",
+  },
+  bannerArt: {
+    width: 100,
+    height: 100,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  bannerEmoji: {
+    fontSize: 64,
   },
   pressed: {
     opacity: 0.78,

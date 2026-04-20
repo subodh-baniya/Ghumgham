@@ -8,7 +8,7 @@ export default function ExploreLayout() {
         headerShown: false,
         animation: 'slide_from_right',
       }}
-      initialRouteName="exploree"
+      initialRouteName="index"
     >
       <Stack.Screen name="index" />
       <Stack.Screen name="detail" />

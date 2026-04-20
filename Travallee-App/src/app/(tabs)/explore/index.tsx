@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
@@ -12,8 +12,20 @@ import {
 
 const filterChips = ['Popular', 'Beach', 'Family', 'Luxury', 'Budget'] as const;
 
+type TabType = 'search' | 'favorites' | 'bookings' | 'reviews';
+
+type IconName = 'search' | 'heart' | 'calendar' | 'star';
+
+const tabs: Array<{ id: TabType; label: string; icon: IconName }> = [
+  { id: 'search', label: 'Search', icon: 'search' },
+  { id: 'favorites', label: 'Favorites', icon: 'heart' },
+  { id: 'bookings', label: 'Bookings', icon: 'calendar' },
+  { id: 'reviews', label: 'Reviews', icon: 'star' },
+] as const;
+
 export default function ExploreScreen() {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<TabType>('search');
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -39,13 +51,41 @@ export default function ExploreScreen() {
           <Text style={styles.searchText}>Search by city, country, or property</Text>
         </Pressable>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
+        {/* Tab Navigation */}
+        <View style={styles.tabBar}>
+          {tabs.map((tab) => (
+            <Pressable
+              key={tab.id}
+              style={[styles.tabItem, activeTab === tab.id && styles.tabItemActive]}
+              onPress={() => setActiveTab(tab.id)}
+            >
+              <Ionicons
+                name={tab.icon}
+                size={16}
+                color={activeTab === tab.id ? RealixColors.accent : RealixColors.textMuted}
+              />
+              <Text
+                style={[
+                  styles.tabLabel,
+                  activeTab === tab.id && styles.tabLabelActive,
+                ]}
+              >
+                {tab.label}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+
+        {/* Tab Content */}
+        {activeTab === 'search' && (
+          <>
+        <View style={styles.chipRow}>
           {filterChips.map((chip, index) => (
             <Pressable key={chip} style={[styles.chip, index === 0 && styles.chipActive]}>
               <Text style={[styles.chipText, index === 0 && styles.chipTextActive]}>{chip}</Text>
             </Pressable>
           ))}
-        </ScrollView>
+        </View>
 
         <Pressable style={styles.heroCard} onPress={() => router.push('/(tabs)/explore/detail')}> 
           <View style={styles.heroImage}>
@@ -97,6 +137,35 @@ export default function ExploreScreen() {
             </View>
           ))}
         </View>
+          </>
+        )}
+
+        {/* Favorites Tab */}
+        {activeTab === 'favorites' && (
+          <View style={styles.emptyState}>
+            <Ionicons name="heart-outline" size={48} color={RealixColors.textMuted} />
+            <Text style={styles.emptyTitle}>No favorites yet</Text>
+            <Text style={styles.emptyText}>Save your favorite properties to view them here</Text>
+          </View>
+        )}
+
+        {/* Bookings Tab */}
+        {activeTab === 'bookings' && (
+          <View style={styles.emptyState}>
+            <Ionicons name="calendar-outline" size={48} color={RealixColors.textMuted} />
+            <Text style={styles.emptyTitle}>No bookings yet</Text>
+            <Text style={styles.emptyText}>Your upcoming bookings will appear here</Text>
+          </View>
+        )}
+
+        {/* Reviews Tab */}
+        {activeTab === 'reviews' && (
+          <View style={styles.emptyState}>
+            <Ionicons name="star-outline" size={48} color={RealixColors.textMuted} />
+            <Text style={styles.emptyTitle}>No reviews yet</Text>
+            <Text style={styles.emptyText}>Leave reviews for properties you've stayed at</Text>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -171,8 +240,10 @@ const styles = StyleSheet.create({
     color: RealixColors.textMuted,
   },
   chipRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 10,
-    paddingRight: 12,
+    marginVertical: 4,
   },
   chip: {
     paddingHorizontal: 16,
@@ -352,5 +423,51 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 20,
     color: RealixColors.textSecondary,
+  },
+  tabBar: {
+    flexDirection: 'row',
+    gap: 2,
+    backgroundColor: RealixColors.cardBackground,
+    borderRadius: 12,
+    padding: 4,
+    marginVertical: 8,
+  },
+  tabItem: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    borderRadius: 10,
+  },
+  tabItemActive: {
+    backgroundColor: RealixColors.accent,
+  },
+  tabLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: RealixColors.textMuted,
+  },
+  tabLabelActive: {
+    color: '#000000',
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+    gap: 16,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: RealixColors.textPrimary,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: RealixColors.textSecondary,
+    textAlign: 'center',
+    maxWidth: 280,
   },
 });
