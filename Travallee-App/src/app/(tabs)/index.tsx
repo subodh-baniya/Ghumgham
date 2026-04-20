@@ -289,7 +289,7 @@ export default function HomeScreen() {
   const [error, setError] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
-  const [userName, setUserName] = useState<string>("");
+  const [userName, setUserName] = useState<string>("Traveller");
   
   // Location hook
   const { location, address, loading: locationLoading, permissionGranted, requestPermission } = useLocation();
@@ -300,16 +300,14 @@ export default function HomeScreen() {
         const token = await SecureStore.getItemAsync("userToken");
         if (!token) return;
         
-        const profileRes = await axios.get(API_PROFILE, {
-          headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+        const res = await axios.get(API_PROFILE, {
+          headers: { Authorization: `Bearer ${token}` },
           timeout: 10000,
         });
         
-        if (profileRes.data.success && profileRes.data.data) {
-          setUserName(profileRes.data.data.name || "");
-          if (profileRes.data.data.profilePicture) {
-            setProfileImage(profileRes.data.data.profilePicture);
-          }
+        if (res.data.success && res.data.data) {
+          setUserName(res.data.data.Name || "Traveller");
+          setProfileImage(res.data.data.profileimage || null);
         }
       } catch (err) {
         console.error("Error fetching profile:", err);
@@ -317,7 +315,7 @@ export default function HomeScreen() {
         setProfileLoading(false); 
       }
     })();
-  }, []);
+  }, [API_PROFILE]);
 
   useEffect(() => {
     (async () => {
@@ -336,7 +334,7 @@ export default function HomeScreen() {
 
   const { user } = useAuth();
   const router = useRouter();
-  const displayName = userName 
+  const displayName = userName;
   const firstName = displayName.split(" ")[0] || "Traveller";
   const initials = displayName.split(" ").map((n) => n[0]).join("").toUpperCase() || "U";
 
