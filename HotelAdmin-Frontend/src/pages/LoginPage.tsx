@@ -43,12 +43,13 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-slate-800 dark:bg-slate-900 rounded-xl shadow-2xl p-8 border border-slate-700">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 border border-slate-200">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">Hotel Admin</h1>
-            <p className="text-slate-400">Ghumgham Property Management</p>
+            <img src="/Logo.png" alt="Travallee Logo" className="w-20 h-20 mx-auto mb-4 object-contain" />
+            <h1 className="text-4xl font-bold font-playfair text-slate-900 mb-2">Hotel Admin</h1>
+            <p className="text-slate-500 text-sm tracking-wide">Travallee Property Management</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -68,13 +69,17 @@ const LoginPage: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            {error && <p className="text-red-400 text-sm bg-red-900 bg-opacity-20 p-2 rounded">{error}</p>}
+            {error && (
+              <p className="text-red-600 text-sm bg-red-50 p-3 rounded-lg border border-red-200">
+                {error}
+              </p>
+            )}
             <Button type="submit" fullWidth variant="primary" disabled={isLoading}>
               {isLoading ? 'Logging in...' : 'Login'}
             </Button>
           </form>
 
-          <p className="text-center text-slate-400 text-sm mt-6">
+          <p className="text-center text-slate-500 text-sm mt-6">
             Not a hotel admin? Contact super admin
           </p>
         </div>
