@@ -20,11 +20,21 @@ const LoginPage: React.FC = () => {
     setError('');
     setIsLoading(true);
     try {
-      const response = await api.post('/users/login', { email, password });
+      // Detect if input is email or username
+      const isEmail = email.includes('@');
+      const payload: any = { password };
+      
+      if (isEmail) {
+        payload.email = email;
+      } else {
+        payload.Username = email;
+      }
+      
+      const response = await api.post('/users/login', payload);
       if (response.data?.data) {
         const userData = response.data.data;
         const { token } = userData;
-        if (userData.role === 'hotelAdmin') {
+        if (userData.role?.toLowerCase() === 'admin') {
           login(userData, token);
           navigate('/dashboard');
         } else {
@@ -364,15 +374,15 @@ const LoginPage: React.FC = () => {
 
               <form onSubmit={handleSubmit}>
                 <div className="field">
-                  <label htmlFor="email">Email Address</label>
+                  <label htmlFor="email">Email or Username</label>
                   <input
                     id="email"
-                    type="email"
-                    placeholder="admin@hotel.com"
+                    type="text"
+                    placeholder="username or email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    autoComplete="email"
+                    autoComplete="username"
                   />
                 </div>
 
