@@ -1,10 +1,12 @@
 import { Router } from "express";
-import { getHotelInfo } from "../controller/admin/controller.js";
+
+//@ts-ignore
+import { authenticate } from "@packages";
 
 
 const router = Router();
 
-router.get('hotel-info', getHotelInfo);
+
 
 
 export default router;  
