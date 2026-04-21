@@ -204,6 +204,11 @@ export default function ProfileScreen() {
           leading={<Ionicons name="document-outline" size={18} color={RealixColors.textSecondary} />}
           onPress={() => router.push('/(tabs)/profile/terms-and-conditions')}
         />
+        <RealixListRow
+          label="More Info"
+          leading={<Ionicons name="information-circle-outline" size={18} color={RealixColors.textSecondary} />}
+          onPress={() => router.push('/(tabs)/profile/more-info')}
+        />
       </RealixCard>
 
       <Text style={styles.meta}>These screens use local sample data so backend endpoints can be connected later without changing the route flow.</Text>
