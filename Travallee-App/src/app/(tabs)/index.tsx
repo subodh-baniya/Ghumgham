@@ -11,6 +11,7 @@ import {
   Image,
   ActivityIndicator,
   ImageBackground,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
@@ -289,10 +290,26 @@ export default function HomeScreen() {
   const [error, setError] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
-  const [userName, setUserName] = useState<string>("");
+  const [userName, setUserName] = useState<string>("Traveller");
+  const [locationEnabled, setLocationEnabled] = useState(false);
+  const [locationPreferenceLoading, setLocationPreferenceLoading] = useState(true);
   
-  // Location hook
+  // Location hook - only used if location is enabled
   const { location, address, loading: locationLoading, permissionGranted, requestPermission } = useLocation();
+
+  // Load location preference
+  useEffect(() => {
+    (async () => {
+      try {
+        const saved = await SecureStore.getItemAsync('locationEnabled');
+        setLocationEnabled(saved === 'true');
+      } catch (err) {
+        console.error('Failed to load location preference:', err);
+      } finally {
+        setLocationPreferenceLoading(false);
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -300,16 +317,14 @@ export default function HomeScreen() {
         const token = await SecureStore.getItemAsync("userToken");
         if (!token) return;
         
-        const profileRes = await axios.get(API_PROFILE, {
-          headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+        const res = await axios.get(API_PROFILE, {
+          headers: { Authorization: `Bearer ${token}` },
           timeout: 10000,
         });
         
-        if (profileRes.data.success && profileRes.data.data) {
-          setUserName(profileRes.data.data.name || "");
-          if (profileRes.data.data.profilePicture) {
-            setProfileImage(profileRes.data.data.profilePicture);
-          }
+        if (res.data.success && res.data.data) {
+          setUserName(res.data.data.Name || "Traveller");
+          setProfileImage(res.data.data.profileimage || null);
         }
       } catch (err) {
         console.error("Error fetching profile:", err);
@@ -317,7 +332,7 @@ export default function HomeScreen() {
         setProfileLoading(false); 
       }
     })();
-  }, []);
+  }, [API_PROFILE]);
 
   useEffect(() => {
     (async () => {
@@ -336,7 +351,7 @@ export default function HomeScreen() {
 
   const { user } = useAuth();
   const router = useRouter();
-  const displayName = userName 
+  const displayName = userName;
   const firstName = displayName.split(" ")[0] || "Traveller";
   const initials = displayName.split(" ").map((n) => n[0]).join("").toUpperCase() || "U";
 
@@ -386,16 +401,25 @@ export default function HomeScreen() {
         {/* ── Location bar ── */}
         <Pressable 
           style={({ pressed }) => [s.locBar, pressed && { opacity: 0.8 }]}
-          onPress={() => permissionGranted ? undefined : requestPermission()}
+          onPress={() => {
+            if (!locationEnabled) {
+              Alert.alert('Location Disabled', 'Enable location in your profile settings to see nearby properties.');
+            } else if (!permissionGranted && !locationLoading) {
+              requestPermission();
+            }
+          }}
         >
           <Ionicons name="location-sharp" size={13} color={N.crimson} />
           <Text style={s.locBarText} numberOfLines={1}>
-            {locationLoading ? "Getting location..." : address || "Enable location"}
+            {!locationEnabled ? 'Location disabled' : locationLoading ? "Getting location..." : address || "Enable location"}
           </Text>
-          {!permissionGranted && !locationLoading && (
+          {!locationEnabled && !locationPreferenceLoading && (
             <Ionicons name="alert-circle" size={13} color={N.saffron} />
           )}
-          {permissionGranted && !locationLoading && (
+          {locationEnabled && !permissionGranted && !locationLoading && (
+            <Ionicons name="alert-circle" size={13} color={N.saffron} />
+          )}
+          {locationEnabled && permissionGranted && !locationLoading && (
             <Ionicons name="checkmark-circle" size={13} color={N.saffron} />
           )}
           <View style={s.locBarDivider} />

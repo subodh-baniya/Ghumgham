@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
-import { Alert, StyleSheet, Switch, Text, View } from 'react-native';
+import { Alert, StyleSheet, Switch, Text, View, Image } from 'react-native';
 import { useAuth } from '@/src/context/AuthContext';
 import {
   RealixCard,
@@ -15,12 +15,14 @@ import { RealixColors } from '@/src/constants/screens/realix';
 import axios from 'axios';
 import { API_ENDPOINTS_AUTH } from '@/src/constants/api';
 import * as SecureStore from 'expo-secure-store';
+import * as Location from 'expo-location';
 import { useEffect } from 'react';
 
 export default function ProfileScreen() {
   const router = useRouter();
   const { logout, user } = useAuth();
   const [locationEnabled, setLocationEnabled] = useState(false);
+  const [locationLoading, setLocationLoading] = useState(true);
   const API_PROFILE = API_ENDPOINTS_AUTH.PROFILE;
   const API_PROFILE_IMAGE = API_ENDPOINTS_AUTH.USER_PROFILE;
   
@@ -28,6 +30,52 @@ export default function ProfileScreen() {
   const [loading, setLoading] = useState(true);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
+
+  // Load location preference on mount
+  useEffect(() => {
+    const loadLocationPreference = async () => {
+      try {
+        const saved = await SecureStore.getItemAsync('locationEnabled');
+        setLocationEnabled(saved === 'true');
+      } catch (err) {
+        console.error('Failed to load location preference:', err);
+      } finally {
+        setLocationLoading(false);
+      }
+    };
+    loadLocationPreference();
+  }, []);
+
+  // Handle location toggle
+  const handleLocationToggle = async (value: boolean) => {
+    if (value) {
+      // Enabling location - request permission
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status === 'granted') {
+          setLocationEnabled(true);
+          await SecureStore.setItemAsync('locationEnabled', 'true');
+          Alert.alert('Success', 'Location enabled. You can now see nearby properties.');
+        } else {
+          Alert.alert(
+            'Permission Denied',
+            'Location permission is required to enable location services. Please enable it in your device settings.',
+            [{ text: 'OK' }]
+          );
+          setLocationEnabled(false);
+        }
+      } catch (err: any) {
+        console.error('Error requesting location permission:', err);
+        Alert.alert('Error', 'Failed to request location permission');
+        setLocationEnabled(false);
+      }
+    } else {
+      // Disabling location
+      setLocationEnabled(false);
+      await SecureStore.setItemAsync('locationEnabled', 'false');
+      Alert.alert('Success', 'Location disabled. Location data will not be tracked.');
+    }
+  };
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -115,7 +163,14 @@ export default function ProfileScreen() {
       <RealixCard style={styles.profileCard}>
         <View style={styles.profileTop}>
           <View style={styles.profileAvatar}>
-            <Text style={styles.profileAvatarText}>{initials}</Text>
+            {profileImage ? (
+              <Image
+                source={{ uri: profileImage }}
+                style={styles.profileAvatarImage}
+              />
+            ) : (
+              <Text style={styles.profileAvatarText}>{initials}</Text>
+            )}
           </View>
           <View style={styles.profileTextWrap}>
             <Text style={styles.profileName}>
@@ -164,7 +219,8 @@ export default function ProfileScreen() {
           trailing={
             <Switch
               value={locationEnabled}
-              onValueChange={setLocationEnabled}
+              onValueChange={handleLocationToggle}
+              disabled={locationLoading}
               trackColor={{ false: '#3a3a3a', true: RealixColors.accentToggle }}
               thumbColor="#ffffff"
             />
@@ -203,6 +259,11 @@ export default function ProfileScreen() {
           label="Terms and Conditions"
           leading={<Ionicons name="document-outline" size={18} color={RealixColors.textSecondary} />}
           onPress={() => router.push('/(tabs)/profile/terms-and-conditions')}
+        />
+        <RealixListRow
+          label="More Info"
+          leading={<Ionicons name="information-circle-outline" size={18} color={RealixColors.textSecondary} />}
+          onPress={() => router.push('/(tabs)/profile/more-info')}
         />
       </RealixCard>
 
@@ -245,6 +306,12 @@ const styles = StyleSheet.create({
     backgroundColor: RealixColors.accent,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  profileAvatarImage: {
+    width: 58,
+    height: 58,
+    borderRadius: 29,
   },
   profileAvatarText: {
     fontSize: 18,

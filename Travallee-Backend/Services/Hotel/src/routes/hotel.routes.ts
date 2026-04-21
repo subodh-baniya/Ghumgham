@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {registerHotel , createroom ,deleteRoom , featuredHotels, HotelData} from "../controller/register.controller.js";
+import {registerHotel , createroom ,deleteRoom , featuredHotels, HotelData, getHotelInfo} from "../controller/register.controller.js";
 
 import { connectDB,
     UserModel,
@@ -29,6 +29,7 @@ import { connectDB,
 const router = Router();
 
 router.post("/register", authenticate, upload.any(), registerHotel);
+router.get("/my-hotel", authenticate, getHotelInfo);
 router.post("/room/:hotelId", authenticate, upload.any(), createroom);
 router.delete("/room/:hotelId/:roomId", deleteRoom); 
 router.get("/featured", featuredHotels); 
