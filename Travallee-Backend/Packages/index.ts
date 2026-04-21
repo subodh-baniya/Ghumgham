@@ -4,6 +4,7 @@ import { asyncHandler } from "./Utils/asynchandler.js";
 import {apiResponse} from "./Utils/response/api.response.js";
 import { UserModel } from "./Model/User.model.js";
 import { hotelModel } from "./Model/Hotel.model.js";
+import { BannerModel } from "./Model/banner.model.js";
 import {
   authenticate,
   checkRole,
@@ -24,6 +25,7 @@ import { uploadToCloudinary } from "./Utils/Func/cloudinary.js";
 import { roomModel } from "./Model/Room.model.js";
 import { bookingModel } from "./Model/Booking.model.js";
 import {upload} from "./middleware/mullter.middleware.js";
+
 
 
 
@@ -51,5 +53,6 @@ export {
     bookingModel,
     uploadToCloudinary,
     upload,
+    BannerModel
 };
 
