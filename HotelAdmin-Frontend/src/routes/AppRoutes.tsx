@@ -3,11 +3,18 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import LoginPage from '../pages/LoginPage';
 import HotelAdminLayout from '../components/layout/HotelAdminLayout';
+import DashboardPage from '../pages/DashboardPage';
+import BookingsPage from '../pages/BookingsPage';
+import GuestsPage from '../pages/GuestsPage';
+import ChatPage from '../pages/ChatPage';
+import ReviewsPage from '../pages/ReviewsPage';
+import EarningsPage from '../pages/EarningsPage';
+import ReportsPage from '../pages/ReportsPage';
+import HotelSettingsPage from '../pages/HotelSettingsPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { token } = useAuth();
   
-  // If no token exists, redirect to login
   if (!token) {
     return <Navigate to="/login" replace />;
   }
@@ -29,17 +36,26 @@ const AppRoutes: React.FC = () => {
         element={token ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} 
       />
       
-      {/* Protected layout route - all admin pages use this */}
+      {/* Protected admin routes with layout */}
       <Route
-        path="/*"
+        path="/"
         element={
           <ProtectedRoute>
             <HotelAdminLayout />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route path="dashboard" element={<DashboardPage />} />
+        <Route path="reservations" element={<BookingsPage />} />
+        <Route path="guests" element={<GuestsPage />} />
+        <Route path="messages" element={<ChatPage />} />
+        <Route path="reviews" element={<ReviewsPage />} />
+        <Route path="finance" element={<EarningsPage />} />
+        <Route path="reports" element={<ReportsPage />} />
+        <Route path="settings" element={<HotelSettingsPage />} />
+      </Route>
       
-      {/* Catch-all route - redirect unknown routes to login */}
+      {/* Catch-all route */}
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );

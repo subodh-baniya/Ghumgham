@@ -1,46 +1,33 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useMemo } from 'react';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
-import DashboardPage from '../../pages/DashboardPage';
-import BookingsPage from '../../pages/BookingsPage';
-import GuestsPage from '../../pages/GuestsPage';
-import ChatPage from '../../pages/ChatPage';
-import ReviewsPage from '../../pages/ReviewsPage';
-import EarningsPage from '../../pages/EarningsPage';
-import ReportsPage from '../../pages/ReportsPage';
-import HotelSettingsPage from '../../pages/HotelSettingsPage';
 
 const HotelAdminLayout: React.FC = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState('dashboard');
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: '■', section: 'Main' },
-    { id: 'reservations', label: 'Reservations', icon: '▬', section: 'Main' },
-    { id: 'guests', label: 'Guests', icon: '●', section: 'Main' },
-    { id: 'messages', label: 'Messages', icon: '◆', section: 'Operations', badge: '4' },
-    { id: 'reviews', label: 'Reviews', icon: '★', section: 'Operations' },
-    { id: 'finance', label: 'Finance', icon: '◈', section: 'Business' },
-    { id: 'reports', label: 'Reports', icon: '▲', section: 'Business' },
-    { id: 'settings', label: 'Settings', icon: '≡', section: 'Business' },
+    { id: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: '■', section: 'Main' },
+    { id: 'reservations', path: '/reservations', label: 'Reservations', icon: '▬', section: 'Main' },
+    { id: 'guests', path: '/guests', label: 'Guests', icon: '●', section: 'Main' },
+    { id: 'messages', path: '/messages', label: 'Messages', icon: '◆', section: 'Operations', badge: '4' },
+    { id: 'reviews', path: '/reviews', label: 'Reviews', icon: '★', section: 'Operations' },
+    { id: 'finance', path: '/finance', label: 'Finance', icon: '◈', section: 'Business' },
+    { id: 'reports', path: '/reports', label: 'Reports', icon: '▲', section: 'Business' },
+    { id: 'settings', path: '/settings', label: 'Settings', icon: '≡', section: 'Business' },
   ];
 
-  const pageComponents: { [key: string]: React.ReactNode } = {
-    dashboard: <DashboardPage />,
-    reservations: <BookingsPage />,
-    guests: <GuestsPage />,
-    messages: <ChatPage />,
-    reviews: <ReviewsPage />,
-    finance: <EarningsPage />,
-    reports: <ReportsPage />,
-    settings: <HotelSettingsPage />,
-  };
-
   const sections = ['Main', 'Operations', 'Business'];
+  
+  // Get current page label from URL
+  const getCurrentLabel = () => {
+    const currentItem = navItems.find((item) => location.pathname.endsWith(item.path));
+    return currentItem?.label || 'Dashboard';
+  };
 
   return (
     <div className={`flex h-screen ${isDarkMode ? 'dark bg-slate-900' : 'bg-slate-50'}`}>
@@ -78,9 +65,9 @@ const HotelAdminLayout: React.FC = () => {
                 .map((item) => (
                   <button
                     key={item.id}
-                    onClick={() => setCurrentPage(item.id)}
+                    onClick={() => navigate(item.path)}
                     className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      currentPage === item.id
+                      location.pathname.endsWith(item.path)
                         ? isDarkMode
                           ? 'bg-slate-700 text-blue-400'
                           : 'bg-slate-100 text-slate-900'
@@ -167,14 +154,14 @@ const HotelAdminLayout: React.FC = () => {
             <span className="text-2xl">☰</span>
           </button>
           <h1 className={`text-2xl font-bold font-playfair ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
-            {navItems.find((item) => item.id === currentPage)?.label || 'Dashboard'}
+            {getCurrentLabel()}
           </h1>
           <div />
         </div>
 
         {/* Content Area */}
         <div className="flex-1 overflow-auto p-6">
-          {pageComponents[currentPage] || <DashboardPage />}
+          <Outlet />
         </div>
       </main>
     </div>
